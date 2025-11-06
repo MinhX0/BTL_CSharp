@@ -12,7 +12,8 @@ namespace backend.Services
 
         public Task<bool> AssignRoleToUserAsync(int userId, string roleName)
         {
-            _userRepository.GetUserByUsernameAsync
+            // TODO: Implement role assignment using a Role repository or DbContext once available
+            throw new NotImplementedException();
         }
 
         public Task<string> LoginAsync(string username, string password)

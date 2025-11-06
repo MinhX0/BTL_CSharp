@@ -1,5 +1,7 @@
+using backend.Configurations;
 using backend.Persistance;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,8 +10,11 @@ builder.Services.AddDbContext<IdentityDbContext>(options =>
 {
     options.UseMySQL(connectionString);
 });
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -25,8 +30,27 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Serve static files from wwwroot (default)
+app.UseStaticFiles();
+// Additionally serve static assets directly from the "template" folder so existing CSS/JS/img paths work
+var templateAssetsPath = Path.Combine(builder.Environment.ContentRootPath, "template");
+if (Directory.Exists(templateAssetsPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(templateAssetsPath),
+        RequestPath = ""
+    });
+}
+
 app.UseAuthorization();
 
+// Map MVC controller routes for Razor views
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Keep API controllers
 app.MapControllers();
 
 app.Run();
