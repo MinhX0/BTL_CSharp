@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Entities.UserInfo
@@ -8,16 +8,22 @@ namespace backend.Entities.UserInfo
     {
         [Key]
         public int UserId { get; set; }
+
         [Required]
         [MaxLength(30)]
-        public string Username {  get; set; }
-        [Required]
-        public string Password {  get; set; }
-        public string HoTen {  get; set; }
-        public string Email {  get; set; }
-        public string Sdt {  get; set; }
-        public string DiaChi {  get; set; }
+        public string Username { get; set; } = string.Empty;
 
-        public ICollection<UserRole> UserRoles { get; set; }=new List<UserRole>();
+        [Required]
+        public string Password { get; set; } = string.Empty;
+
+        public string HoTen { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+
+        public string Sdt { get; set; } = string.Empty;
+
+        public string DiaChi { get; set; } = string.Empty;
+
+        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }
 }

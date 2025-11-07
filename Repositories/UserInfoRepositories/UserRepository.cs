@@ -19,7 +19,7 @@ namespace backend.Repositories.UserInfoRepositories
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(string roleName)
         {
             return await _dbSet
-            .Where(u => u.UserRoles.Any(ur => ur.Role.Name == roleName))
+            .Where(u => u.UserRoles.Any(ur => ur.Role != null && ur.Role.Name == roleName))
             .ToListAsync();
         }
     }

@@ -26,6 +26,16 @@
 <body>
     @await Html.PartialAsync("_Header")
 
+    @if (IsSectionDefined("HeaderExtra"))
+    {
+        @RenderSection("HeaderExtra", required: false)
+    }
+
+    @if (IsSectionDefined("Carousel"))
+    {
+        @RenderSection("Carousel", required: false)
+    }
+
     <main role="main">
         @RenderBody()
     </main>
