@@ -1,5 +1,10 @@
+@model ShopViewModel
+@using System.Globalization
 @{
     ViewData["Title"] = "Shop";
+
+    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
+    string ImagePath(string? value) => Url.Content(string.IsNullOrWhiteSpace(value) ? "~/template/img/product-1.jpg" : value);
 }
 
 <!-- Page Header Start -->
@@ -58,81 +63,81 @@
             </div>
             <!-- Price End -->
 
-            <!-- Color Start -->
+            <!-- Strap Start -->
             <div class="border-bottom mb-4 pb-4">
-                <h5 class="font-weight-semi-bold mb-4">Filter by color</h5>
+                <h5 class="font-weight-semi-bold mb-4">Filter by strap</h5>
                 <form>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="color-all">
-                        <label class="custom-control-label" for="price-all">All Color</label>
+                        <input type="checkbox" class="custom-control-input" checked id="strap-all">
+                        <label class="custom-control-label" for="strap-all">All Strap Types</label>
                         <span class="badge border font-weight-normal">1000</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-1">
-                        <label class="custom-control-label" for="color-1">Black</label>
+                        <input type="checkbox" class="custom-control-input" id="strap-1">
+                        <label class="custom-control-label" for="strap-1">Stainless Steel</label>
                         <span class="badge border font-weight-normal">150</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-2">
-                        <label class="custom-control-label" for="color-2">White</label>
+                        <input type="checkbox" class="custom-control-input" id="strap-2">
+                        <label class="custom-control-label" for="strap-2">Genuine Leather</label>
                         <span class="badge border font-weight-normal">295</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-3">
-                        <label class="custom-control-label" for="color-3">Red</label>
+                        <input type="checkbox" class="custom-control-input" id="strap-3">
+                        <label class="custom-control-label" for="strap-3">Silicone &amp; Rubber</label>
                         <span class="badge border font-weight-normal">246</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-4">
-                        <label class="custom-control-label" for="color-4">Blue</label>
+                        <input type="checkbox" class="custom-control-input" id="strap-4">
+                        <label class="custom-control-label" for="strap-4">Mesh Bracelet</label>
                         <span class="badge border font-weight-normal">145</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                        <input type="checkbox" class="custom-control-input" id="color-5">
-                        <label class="custom-control-label" for="color-5">Green</label>
+                        <input type="checkbox" class="custom-control-input" id="strap-5">
+                        <label class="custom-control-label" for="strap-5">NATO Fabric</label>
                         <span class="badge border font-weight-normal">168</span>
                     </div>
                 </form>
             </div>
-            <!-- Color End -->
+            <!-- Strap End -->
 
-            <!-- Size Start -->
+            <!-- Movement Start -->
             <div class="mb-5">
-                <h5 class="font-weight-semi-bold mb-4">Filter by size</h5>
+                <h5 class="font-weight-semi-bold mb-4">Filter by movement</h5>
                 <form>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="size-all">
-                        <label class="custom-control-label" for="size-all">All Size</label>
+                        <input type="checkbox" class="custom-control-input" checked id="movement-all">
+                        <label class="custom-control-label" for="movement-all">All Movements</label>
                         <span class="badge border font-weight-normal">1000</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-1">
-                        <label class="custom-control-label" for="size-1">XS</label>
+                        <input type="checkbox" class="custom-control-input" id="movement-1">
+                        <label class="custom-control-label" for="movement-1">Automatic</label>
                         <span class="badge border font-weight-normal">150</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-2">
-                        <label class="custom-control-label" for="size-2">S</label>
+                        <input type="checkbox" class="custom-control-input" id="movement-2">
+                        <label class="custom-control-label" for="movement-2">Quartz</label>
                         <span class="badge border font-weight-normal">295</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-3">
-                        <label class="custom-control-label" for="size-3">M</label>
+                        <input type="checkbox" class="custom-control-input" id="movement-3">
+                        <label class="custom-control-label" for="movement-3">Solar</label>
                         <span class="badge border font-weight-normal">246</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-4">
-                        <label class="custom-control-label" for="size-4">L</label>
+                        <input type="checkbox" class="custom-control-input" id="movement-4">
+                        <label class="custom-control-label" for="movement-4">Kinetic</label>
                         <span class="badge border font-weight-normal">145</span>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                        <input type="checkbox" class="custom-control-input" id="size-5">
-                        <label class="custom-control-label" for="size-5">XL</label>
+                        <input type="checkbox" class="custom-control-input" id="movement-5">
+                        <label class="custom-control-label" for="movement-5">Smart</label>
                         <span class="badge border font-weight-normal">168</span>
                     </div>
                 </form>
             </div>
-            <!-- Size End -->
+            <!-- Movement End -->
         </div>
         <!-- Shop Sidebar End -->
 
@@ -163,26 +168,46 @@
                         </div>
                     </div>
                 </div>
-                @for (int i = 1; i <= 9; i++)
+                @if (Model.Products.Count == 0)
                 {
-                    var imgIdx = ((i - 1) % 8) + 1; // cycle 1..8
-                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
-                        <div class="card product-item border-0 mb-4">
-                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                                <img class="img-fluid w-100" src="@($"/img/product-{imgIdx}.jpg")" alt="">
-                            </div>
-                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                                <h6 class="text-truncate mb-3">Colorful Stylish Shirt</h6>
-                                <div class="d-flex justify-content-center">
-                                    <h6>$123.00</h6><h6 class="text-muted ml-2"><del>$123.00</del></h6>
+                    <div class="col-12 text-center">
+                        <p class="text-muted mb-0">No watches found. Try adjusting your filters.</p>
+                    </div>
+                }
+                else
+                {
+                    foreach (var product in Model.Products)
+                    {
+                        <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+                            <div class="card product-item border-0 mb-4">
+                                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                    <a asp-controller="Home" asp-action="Detail" asp-route-id="@product.ProductId" class="d-block">
+                                        <img class="img-fluid w-100" src="@ImagePath(product.ImageUrl)" alt="@product.Name">
+                                    </a>
+                                    @if (!string.IsNullOrWhiteSpace(product.CategoryName))
+                                    {
+                                        <span class="badge badge-primary position-absolute" style="top: 10px; left: 10px;">@product.CategoryName</span>
+                                    }
+                                </div>
+                                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                    <h6 class="text-truncate mb-3">
+                                        <a asp-controller="Home" asp-action="Detail" asp-route-id="@product.ProductId" class="text-dark">@product.Name</a>
+                                    </h6>
+                                    <div class="d-flex justify-content-center">
+                                        <h6>@FormatPrice(product.Price)</h6>
+                                        @if (product.HasDiscount && product.OriginalPrice.HasValue)
+                                        {
+                                            <h6 class="text-muted ml-2"><del>@FormatPrice(product.OriginalPrice.Value)</del></h6>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between bg-light border">
+                                    <a asp-controller="Home" asp-action="Detail" asp-route-id="@product.ProductId" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Quick View</a>
+                                    <a asp-controller="Home" asp-action="Cart" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
                                 </div>
                             </div>
-                            <div class="card-footer d-flex justify-content-between bg-light border">
-                                <a href="#" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
-                                <a asp-controller="Home" asp-action="Cart" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
-                            </div>
                         </div>
-                    </div>
+                    }
                 }
                 <div class="col-12 pb-1">
                     <nav aria-label="Page navigation">

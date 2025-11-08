@@ -24,6 +24,9 @@ namespace backend.Persistance
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<UserRole>()
+                .HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            modelBuilder.Entity<UserRole>()
                 .HasOne(ur => ur.User)
                 .WithMany(u => u.UserRoles)
                 .HasForeignKey(ur => ur.UserId);
@@ -54,7 +57,7 @@ namespace backend.Persistance
                     .OnDelete(DeleteBehavior.Restrict);
                 entity.ToTable(table =>
                 {
-                    table.HasCheckConstraint("CK_Product_Discount", "Discount >= 0 AND Discount <= 1");
+                    table.HasCheckConstraint("CK_Product_Discount", "Discount >= 0 AND Discount <= 100");
                     table.HasCheckConstraint("CK_Product_StockQuantity", "StockQuantity >= 0");
                 });
             });

@@ -1,5 +1,20 @@
+@using System.Globalization
+@using System.Linq
 @{
     ViewData["Title"] = "Cart";
+
+    var cartItems = new[]
+    {
+        new { Image = "/img/product-1.jpg", Name = "ChronoLux Stainless Steel", Price = 249m, Quantity = 1 },
+        new { Image = "/img/product-5.jpg", Name = "Heritage Skeleton Automatic", Price = 359m, Quantity = 1 },
+        new { Image = "/img/product-8.jpg", Name = "PulseFit Smartwatch", Price = 189m, Quantity = 2 }
+    };
+
+    decimal subtotal = cartItems.Sum(item => item.Price * item.Quantity);
+    const decimal shipping = 12m;
+    decimal total = subtotal + shipping;
+
+    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
 }
 
 <!-- Page Header Start -->
@@ -30,23 +45,26 @@
                     </tr>
                 </thead>
                 <tbody class="align-middle">
-                    @for (int i = 1; i <= 5; i++)
+                    @foreach (var item in cartItems)
                     {
                         <tr>
-                            <td class="align-middle"><img src="@($"/img/product-{i}.jpg")" alt="" style="width: 50px;"> Colorful Stylish Shirt</td>
-                            <td class="align-middle">$150</td>
+                            <td class="align-middle text-left">
+                                <img src="@item.Image" alt="@item.Name" style="width: 60px;" class="mr-2 rounded">
+                                @item.Name
+                            </td>
+                            <td class="align-middle">@FormatPrice(item.Price)</td>
                             <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 100px;">
-                                    <div class="input-group-btn">
+                                <div class="input-group quantity mx-auto" style="width: 120px;">
+                                    <div class="input-group-prepend">
                                         <button class="btn btn-sm btn-primary btn-minus" type="button"><i class="fa fa-minus"></i></button>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                    <div class="input-group-btn">
+                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="@item.Quantity">
+                                    <div class="input-group-append">
                                         <button class="btn btn-sm btn-primary btn-plus" type="button"><i class="fa fa-plus"></i></button>
                                     </div>
                                 </div>
                             </td>
-                            <td class="align-middle">$150</td>
+                            <td class="align-middle">@FormatPrice(item.Price * item.Quantity)</td>
                             <td class="align-middle"><button class="btn btn-sm btn-primary" type="button"><i class="fa fa-times"></i></button></td>
                         </tr>
                     }
@@ -69,17 +87,17 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-3 pt-1">
                         <h6 class="font-weight-medium">Subtotal</h6>
-                        <h6 class="font-weight-medium">$150</h6>
+                        <h6 class="font-weight-medium">@FormatPrice(subtotal)</h6>
                     </div>
                     <div class="d-flex justify-content-between">
                         <h6 class="font-weight-medium">Shipping</h6>
-                        <h6 class="font-weight-medium">$10</h6>
+                        <h6 class="font-weight-medium">@FormatPrice(shipping)</h6>
                     </div>
                 </div>
                 <div class="card-footer border-secondary bg-transparent">
                     <div class="d-flex justify-content-between mt-2">
                         <h5 class="font-weight-bold">Total</h5>
-                        <h5 class="font-weight-bold">$160</h5>
+                        <h5 class="font-weight-bold">@FormatPrice(total)</h5>
                     </div>
                     <a asp-controller="Home" asp-action="Checkout" class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</a>
                 </div>

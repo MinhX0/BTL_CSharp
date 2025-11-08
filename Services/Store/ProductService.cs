@@ -27,6 +27,11 @@ namespace backend.Services.Store
             return await _productRepository.GetByCategoryAsync(categoryId);
         }
 
+        public async Task<Product?> GetProductWithDetailsAsync(int id)
+        {
+            return await _productRepository.GetProductWithDetailsAsync(id);
+        }
+
         public async Task<Product> CreateAsync(Product product)
         {
             await _productRepository.AddAsync(product);

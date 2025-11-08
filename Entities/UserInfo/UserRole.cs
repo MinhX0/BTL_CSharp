@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace backend.Entities.UserInfo
 {
+    [PrimaryKey(nameof(UserId), nameof(RoleId))]
     public class UserRole
     {
         public int UserId { get; set; }
