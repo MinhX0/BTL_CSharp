@@ -50,7 +50,7 @@ namespace backend.Services.Store
             existing.CategoryId = product.CategoryId;
             existing.Brand = product.Brand;
             existing.Price = product.Price;
-            existing.Discount = product.Discount;
+            existing.DiscountPrice = product.DiscountPrice;
             existing.Description = product.Description;
             existing.Gender = product.Gender;
             existing.Origin = product.Origin;
@@ -58,6 +58,7 @@ namespace backend.Services.Store
             existing.Material = product.Material;
             existing.Img = product.Img;
             existing.StockQuantity = product.StockQuantity;
+            existing.IsActive = product.IsActive;
 
             _productRepository.Update(existing);
             return true;

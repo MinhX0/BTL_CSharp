@@ -19,10 +19,9 @@ namespace backend.Entities.Store
         [MaxLength(100)]
         public string? Brand { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
+        public long Price { get; set; }
 
-        public double Discount { get; set; }
+        public long? DiscountPrice { get; set; }
 
         public string? Description { get; set; }
 
@@ -40,6 +39,8 @@ namespace backend.Entities.Store
 
         [MaxLength(255)]
         public string? Img { get; set; }
+
+        public bool IsActive { get; set; } = true;
 
         public int StockQuantity { get; set; }
 

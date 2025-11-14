@@ -6,8 +6,8 @@ namespace backend.ViewModels.Home
         public string Name { get; init; } = string.Empty;
         public string? CategoryName { get; init; }
         public string ImageUrl { get; init; } = string.Empty;
-        public decimal Price { get; init; }
-        public decimal? OriginalPrice { get; init; }
+        public long Price { get; init; }
+        public long? OriginalPrice { get; init; }
         public double Discount { get; init; }
 
         public bool HasDiscount => OriginalPrice.HasValue && OriginalPrice.Value > Price;

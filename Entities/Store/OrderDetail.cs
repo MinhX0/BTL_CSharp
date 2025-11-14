@@ -17,8 +17,7 @@ namespace backend.Entities.Store
 
         public int Quantity { get; set; }
 
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
+        public long Price { get; set; }
 
         public Order? Order { get; set; }
 

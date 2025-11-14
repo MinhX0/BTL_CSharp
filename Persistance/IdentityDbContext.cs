@@ -49,15 +49,16 @@ namespace backend.Persistance
 
             modelBuilder.Entity<Product>(entity =>
             {
-                entity.Property(e => e.Price).HasColumnType("decimal(10,2)");
                 entity.Property(e => e.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
                 entity.HasOne(p => p.Category)
                     .WithMany(c => c.Products)
                     .HasForeignKey(p => p.CategoryId)
                     .OnDelete(DeleteBehavior.Restrict);
                 entity.ToTable(table =>
                 {
-                    table.HasCheckConstraint("CK_Product_Discount", "Discount >= 0 AND Discount <= 100");
+                    table.HasCheckConstraint("CK_Product_Price", "Price >= 0");
+                    table.HasCheckConstraint("CK_Product_Discount", "DiscountPrice IS NULL OR (DiscountPrice >= 0 AND DiscountPrice < Price)");
                     table.HasCheckConstraint("CK_Product_StockQuantity", "StockQuantity >= 0");
                 });
             });
@@ -65,17 +66,25 @@ namespace backend.Persistance
             modelBuilder.Entity<Admin>(entity =>
             {
                 entity.HasIndex(e => e.Username).IsUnique();
+                entity.ToTable(table =>
+                {
+                    table.HasCheckConstraint("CK_Admin_Role", "Role IN ('Owner', 'Manager', 'Staff')");
+                });
             });
 
             modelBuilder.Entity<Order>(entity =>
             {
-                entity.Property(e => e.TotalAmount).HasColumnType("decimal(10,2)");
                 entity.Property(e => e.OrderDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
                 entity.Property(e => e.Status).HasMaxLength(50).HasDefaultValue("Pending");
                 entity.HasOne(o => o.Customer)
                     .WithMany(c => c.Orders)
                     .HasForeignKey(o => o.CustomerId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.ToTable(table =>
+                {
+                    table.HasCheckConstraint("CK_Order_TotalAmount", "TotalAmount >= 0");
+                    table.HasCheckConstraint("CK_Order_Status", "Status IN ('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled')");
+                });
             });
 
             modelBuilder.Entity<Cart>(entity =>
@@ -90,11 +99,14 @@ namespace backend.Persistance
                     .WithMany(p => p.Carts)
                     .HasForeignKey(c => c.ProductId)
                     .OnDelete(DeleteBehavior.Cascade);
+                entity.ToTable(table =>
+                {
+                    table.HasCheckConstraint("CK_Cart_Quantity", "Quantity > 0");
+                });
             });
 
             modelBuilder.Entity<OrderDetail>(entity =>
             {
-                entity.Property(e => e.Price).HasColumnType("decimal(10,2)");
                 entity.HasIndex(e => new { e.OrderId, e.ProductId }).IsUnique();
                 entity.HasOne(od => od.Order)
                     .WithMany(o => o.OrderDetails)
@@ -103,7 +115,12 @@ namespace backend.Persistance
                 entity.HasOne(od => od.Product)
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(od => od.ProductId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.Restrict);
+                entity.ToTable(table =>
+                {
+                    table.HasCheckConstraint("CK_OrderDetail_Quantity", "Quantity > 0");
+                    table.HasCheckConstraint("CK_OrderDetail_Price", "Price >= 0");
+                });
             });
         }
     }

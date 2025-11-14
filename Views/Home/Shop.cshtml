@@ -4,21 +4,8 @@
     ViewData["Title"] = "Shop";
 
     string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
-    string ImagePath(string? value) => Url.Content(string.IsNullOrWhiteSpace(value) ? "~/template/img/product-1.jpg" : value);
 }
 
-<!-- Page Header Start -->
-<div class="container-fluid bg-secondary mb-5">
-    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3">Our Shop</h1>
-        <div class="d-inline-flex">
-            <p class="m-0"><a asp-controller="Home" asp-action="Index">Home</a></p>
-            <p class="m-0 px-2">-</p>
-            <p class="m-0">Shop</p>
-        </div>
-    </div>
-    </div>
-<!-- Page Header End -->
 
 <!-- Shop Start -->
 <div class="container-fluid pt-5">
@@ -182,7 +169,7 @@
                             <div class="card product-item border-0 mb-4">
                                 <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
                                     <a asp-controller="Home" asp-action="Detail" asp-route-id="@product.ProductId" class="d-block">
-                                        <img class="img-fluid w-100" src="@ImagePath(product.ImageUrl)" alt="@product.Name">
+                                        <img class="img-fluid w-100" src="@Url.Content(product.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@product.Name">
                                     </a>
                                     @if (!string.IsNullOrWhiteSpace(product.CategoryName))
                                     {

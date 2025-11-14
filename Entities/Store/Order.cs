@@ -14,8 +14,7 @@ namespace backend.Entities.Store
 
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal TotalAmount { get; set; }
+        public long TotalAmount { get; set; }
 
         [MaxLength(50)]
         public string? PaymentMethod { get; set; }

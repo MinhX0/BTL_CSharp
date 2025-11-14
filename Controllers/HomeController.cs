@@ -44,7 +44,8 @@ namespace backend.Controllers
             var categoriesLookup = categories.ToDictionary(c => c.CategoryId, c => c.CategoryName);
 
             var trendingProducts = products
-                .OrderByDescending(p => p.Discount)
+                .Where(p => p.IsActive && p.DiscountPrice.HasValue)
+                .OrderBy(p => p.DiscountPrice)
                 .ThenByDescending(p => p.Price)
                 .Select(product => ToProductCardViewModel(product, categoriesLookup))
                 .Take(8)
@@ -77,6 +78,7 @@ namespace backend.Controllers
             var viewModel = new ShopViewModel
             {
                 Products = products
+                    .Where(p => p.IsActive)
                     .Select(product => ToProductCardViewModel(product, categoriesLookup))
                     .ToList()
             };
@@ -96,8 +98,8 @@ namespace backend.Controllers
                 .ToDictionary(c => c.CategoryId, c => c.CategoryName);
 
             var relatedProducts = (await _productService.GetByCategoryAsync(product.CategoryId))
-                .Where(p => p.ProductId != product.ProductId)
-                .OrderByDescending(p => p.Discount)
+                .Where(p => p.ProductId != product.ProductId && p.IsActive)
+                .OrderBy(p => p.DiscountPrice ?? long.MaxValue)
                 .ThenByDescending(p => p.CreatedDate)
                 .Select(p => ToProductCardViewModel(p, categoriesLookup))
                 .Take(4)
@@ -114,8 +116,8 @@ namespace backend.Controllers
                 CategoryName = categoryName,
                 Brand = product.Brand,
                 Price = product.Price,
-                OriginalPrice = CalculateOriginalPrice(product.Price, product.Discount),
-                Discount = product.Discount,
+                OriginalPrice = product.DiscountPrice,
+                Discount = CalculateDiscountPercentage(product.Price, product.DiscountPrice),
                 ImageUrl = BuildProductImagePath(product),
                 Description = string.IsNullOrWhiteSpace(product.Description)
                     ? "No description available for this watch yet."
@@ -156,8 +158,8 @@ namespace backend.Controllers
                 CategoryName = categoriesLookup.TryGetValue(product.CategoryId, out var name) ? name : null,
                 ImageUrl = BuildProductImagePath(product),
                 Price = product.Price,
-                OriginalPrice = CalculateOriginalPrice(product.Price, product.Discount),
-                Discount = product.Discount
+                OriginalPrice = product.DiscountPrice,
+                Discount = CalculateDiscountPercentage(product.Price, product.DiscountPrice)
             };
         }
 
@@ -211,21 +213,15 @@ namespace backend.Controllers
             return $"~/images/categories/{fileName}";
         }
 
-        private static decimal? CalculateOriginalPrice(decimal price, double discount)
+        private static double CalculateDiscountPercentage(long price, long? discountPrice)
         {
-            if (discount <= 0 || discount >= 100)
+            if (!discountPrice.HasValue || discountPrice.Value >= price || discountPrice.Value <= 0)
             {
-                return null;
+                return 0;
             }
 
-            var discountFraction = (decimal)(discount / 100d);
-            if (discountFraction <= 0 || discountFraction >= 1)
-            {
-                return null;
-            }
-
-            var originalPrice = price / (1 - discountFraction);
-            return Math.Round(originalPrice, 2);
+            var discount = ((double)(price - discountPrice.Value) / price) * 100;
+            return Math.Round(discount, 2);
         }
 
         private static IReadOnlyList<ProductSpecificationViewModel> BuildSpecifications(Product product)
