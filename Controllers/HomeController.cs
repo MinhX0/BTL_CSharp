@@ -68,17 +68,23 @@ namespace backend.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> Shop()
+        public async Task<IActionResult> Shop(int? categoryId)
         {
             var categories = await _categoryService.GetAllAsync();
             var products = await _productService.GetAllAsync();
 
             var categoriesLookup = categories.ToDictionary(c => c.CategoryId, c => c.CategoryName);
 
+            var filteredProducts = products.Where(p => p.IsActive);
+            
+            if (categoryId.HasValue)
+            {
+                filteredProducts = filteredProducts.Where(p => p.CategoryId == categoryId.Value);
+            }
+
             var viewModel = new ShopViewModel
             {
-                Products = products
-                    .Where(p => p.IsActive)
+                Products = filteredProducts
                     .Select(product => ToProductCardViewModel(product, categoriesLookup))
                     .ToList()
             };

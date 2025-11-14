@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = Model.Name;
 
-    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
+    string FormatPrice(long value) => $"{value:N0} ₫";
 }
 
 <!-- Breadcrumb Start -->
@@ -146,9 +146,9 @@
             {
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card product-item border-0 mb-4">
-                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
-                            <a asp-controller="Home" asp-action="Detail" asp-route-id="@product.ProductId" class="d-block">
-                                <img class="img-fluid w-100" src="@Url.Content(product.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@product.Name">
+                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0" style="height: 300px;">
+                            <a asp-controller="Home" asp-action="Detail" asp-route-id="@product.ProductId" class="d-block h-100">
+                                <img class="img-fluid w-100 h-100" src="@Url.Content(product.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@product.Name" style="object-fit: cover;">
                             </a>
                             @if (!string.IsNullOrWhiteSpace(product.CategoryName))
                             {
