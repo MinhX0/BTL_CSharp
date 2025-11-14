@@ -181,7 +181,9 @@ namespace backend.Controllers
                 return "~" + imagePath;
             }
 
-            return $"~/template/{imagePath}";
+            // Map to external product images directory
+            var fileName = Path.GetFileName(imagePath);
+            return $"~/images/products/{fileName}";
         }
 
         private static string BuildCategoryImagePath(Category category)
@@ -204,7 +206,9 @@ namespace backend.Controllers
                 return "~" + imagePath;
             }
 
-            return $"~/template/{imagePath}";
+            // Map to external category images directory
+            var fileName = Path.GetFileName(imagePath);
+            return $"~/images/categories/{fileName}";
         }
 
         private static decimal? CalculateOriginalPrice(decimal price, double discount)

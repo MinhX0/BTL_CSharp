@@ -59,7 +59,8 @@ app.UseHttpsRedirection();
 
 // Serve static files from wwwroot (default)
 app.UseStaticFiles();
-// Additionally serve static assets directly from the "template" folder so existing CSS/JS/img paths work
+
+// Serve template assets (CSS/JS/img)
 var templateAssetsPath = Path.Combine(builder.Environment.ContentRootPath, "template");
 if (Directory.Exists(templateAssetsPath))
 {
@@ -67,6 +68,28 @@ if (Directory.Exists(templateAssetsPath))
     {
         FileProvider = new PhysicalFileProvider(templateAssetsPath),
         RequestPath = ""
+    });
+}
+
+// Serve product images from external directory
+var productImagesPath = builder.Configuration["ImagePaths:ProductImages"];
+if (!string.IsNullOrWhiteSpace(productImagesPath) && Directory.Exists(productImagesPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(productImagesPath),
+        RequestPath = "/images/products"
+    });
+}
+
+// Serve category images from external directory
+var categoryImagesPath = builder.Configuration["ImagePaths:CategoryImages"];
+if (!string.IsNullOrWhiteSpace(categoryImagesPath) && Directory.Exists(categoryImagesPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(categoryImagesPath),
+        RequestPath = "/images/categories"
     });
 }
 
