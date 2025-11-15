@@ -3,6 +3,7 @@ using backend.Persistance;
 using backend.Repositories.Store;
 using backend.Repositories.UserInfoRepositories;
 using backend.Services.Store;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 
@@ -18,6 +19,16 @@ builder.Services.AddDbContext<IdentityDbContext>(options =>
 {
     options.UseMySQL(connectionString);
 });
+// Register cookie authentication as the default for the web app (so [Authorize] works)
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    });
+
+// JWT support still available for APIs
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 
@@ -93,12 +104,13 @@ if (!string.IsNullOrWhiteSpace(categoryImagesPath) && Directory.Exists(categoryI
     });
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Map MVC controller routes for Razor views
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Store}/{action=Index}/{id?}");
 
 // Keep API controllers
 app.MapControllers();
