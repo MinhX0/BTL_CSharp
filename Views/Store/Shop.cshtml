@@ -1,0 +1,55 @@
+@model ShopViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Shop";
+    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
+}
+
+<div class="container-fluid pt-5">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2">All Products</span></h2>
+    </div>
+    <div class="row px-xl-5 pb-3">
+        @if (Model.Products == null || Model.Products.Count == 0)
+        {
+            <div class="col-12 text-center">
+                <p class="text-muted mb-0">No products found.</p>
+            </div>
+        }
+        else
+        {
+            foreach (var product in Model.Products)
+            {
+                <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
+                    <div class="card product-item border-0 mb-4">
+                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                            <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="d-block">
+                                <img class="img-fluid w-100" src="@Url.Content(product.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@product.Name">
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(product.CategoryName))
+                            {
+                                <span class="badge badge-primary position-absolute" style="top: 10px; left: 10px;">@product.CategoryName</span>
+                            }
+                        </div>
+                        <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                            <h6 class="text-truncate mb-3">
+                                <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="text-dark">@product.Name</a>
+                            </h6>
+                            <div class="d-flex justify-content-center">
+                                <h6>@FormatPrice((decimal)product.Price)</h6>
+                                @if (product.OriginalPrice.HasValue)
+                                {
+                                    <h6 class="text-muted ml-2"><del>@FormatPrice((decimal)product.OriginalPrice.Value)</del></h6>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between bg-light border">
+                            <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Quick View</a>
+                            <a asp-controller="Store" asp-action="Cart" class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

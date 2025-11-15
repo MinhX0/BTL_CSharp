@@ -1,15 +1,14 @@
 @model ProductDetailViewModel
 @using System.Globalization
 @{
-    ViewData["Title"] = Model.Name;
-
-    string FormatPrice(long value) => $"{value:N0} ₫";
+    ViewData["Title"] = Model?.Name ?? "Product Detail";
+    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
 }
 
 <!-- Breadcrumb Start -->
 <div class="container-fluid bg-secondary mb-5">
-    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 260px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3">@Model.Name</h1>
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 200px">
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">@Model?.Name</h1>
         <div class="d-inline-flex">
             <p class="m-0"><a asp-controller="Store" asp-action="Index">Home</a></p>
             <p class="m-0 px-2">-</p>
@@ -18,7 +17,7 @@
             <p class="m-0">Product detail</p>
         </div>
     </div>
-</div>
+    </div>
 <!-- Breadcrumb End -->
 
 <!-- Product Detail Start -->
@@ -26,67 +25,64 @@
     <div class="row px-xl-5">
         <div class="col-lg-5 mb-4">
             <div class="border">
-                <img class="img-fluid w-100" src="@Url.Content(Model.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@Model.Name">
+                <img class="img-fluid w-100" src="@Url.Content(Model?.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@Model?.Name">
             </div>
         </div>
         <div class="col-lg-7">
-            <h3 class="font-weight-semi-bold">@Model.Name</h3>
-            @if (!string.IsNullOrWhiteSpace(Model.CategoryName) || !string.IsNullOrWhiteSpace(Model.Brand))
+            <h3 class="font-weight-semi-bold">@Model?.Name</h3>
+
+            @if (!string.IsNullOrWhiteSpace(Model?.CategoryName) || !string.IsNullOrWhiteSpace(Model?.Brand))
             {
                 <p class="text-muted mb-2">
-                    @if (!string.IsNullOrWhiteSpace(Model.Brand))
+                    @if (!string.IsNullOrWhiteSpace(Model?.Brand))
                     {
-                        <span class="mr-2"><strong>Brand:</strong> @Model.Brand</span>
+                        <span class="mr-2"><strong>Brand:</strong> @Model!.Brand</span>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Model.CategoryName))
+                    @if (!string.IsNullOrWhiteSpace(Model?.CategoryName))
                     {
-                        <span><strong>Collection:</strong> @Model.CategoryName</span>
+                        <span><strong>Collection:</strong> @Model!.CategoryName</span>
                     }
                 </p>
             }
 
             <div class="d-flex align-items-baseline mb-4">
-                <h2 class="font-weight-semi-bold mb-0 text-primary">@FormatPrice(Model.Price)</h2>
-                @if (Model.HasDiscount && Model.OriginalPrice.HasValue)
+                <h2 class="font-weight-semi-bold mb-0 text-primary">@FormatPrice((decimal)(Model?.Price ?? 0))</h2>
+                @if (Model?.OriginalPrice.HasValue == true)
                 {
-                    <h5 class="text-muted ml-3"><del>@FormatPrice(Model.OriginalPrice.Value)</del></h5>
-                    <span class="badge badge-success ml-3">-@Model.Discount.ToString("0")%</span>
+                    <h5 class="text-muted ml-3"><del>@FormatPrice((decimal)Model!.OriginalPrice!.Value)</del></h5>
+                }
+                @if ((Model?.Discount ?? 0) > 0)
+                {
+                    <span class="badge badge-success ml-3">-@Model!.Discount.ToString("0")%</span>
                 }
             </div>
 
-            <p class="mb-4" style="white-space: pre-line;">@Model.Description</p>
-
             <div class="mb-4">
+                <p class="mb-1"><strong>Status:</strong></p>
                 <p class="mb-1">
-                    <strong>Status:</strong>
-                    @if (Model.InStock)
+                    @if ((Model?.StockQuantity ?? 0) > 0)
                     {
-                        <span class="text-success">In Stock (@Model.StockQuantity in inventory)</span>
+                        <span class="text-success">In Stock (@Model!.StockQuantity in inventory)</span>
                     }
                     else
                     {
                         <span class="text-danger">Temporarily unavailable</span>
                     }
                 </p>
-                @if (!string.IsNullOrWhiteSpace(Model.MovementType) || !string.IsNullOrWhiteSpace(Model.Gender) || !string.IsNullOrWhiteSpace(Model.Material) || !string.IsNullOrWhiteSpace(Model.Origin))
+            </div>
+
+            <div class="mb-4" style="white-space: pre-line;">
+                <p class="mb-4">@Model?.Description</p>
+            </div>
+
+            <div class="mb-4">
+                @if (!string.IsNullOrWhiteSpace(Model?.MovementType) || !string.IsNullOrWhiteSpace(Model?.Gender) || !string.IsNullOrWhiteSpace(Model?.Material) || !string.IsNullOrWhiteSpace(Model?.Origin))
                 {
                     <ul class="list-unstyled mb-0 text-muted">
-                        @if (!string.IsNullOrWhiteSpace(Model.MovementType))
-                        {
-                            <li><strong>Movement:</strong> @Model.MovementType</li>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Gender))
-                        {
-                            <li><strong>Designed for:</strong> @Model.Gender</li>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Material))
-                        {
-                            <li><strong>Case &amp; strap:</strong> @Model.Material</li>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(Model.Origin))
-                        {
-                            <li><strong>Origin:</strong> @Model.Origin</li>
-                        }
+                        @if (!string.IsNullOrWhiteSpace(Model?.MovementType)) { <li><strong>Movement:</strong> @Model!.MovementType</li> }
+                        @if (!string.IsNullOrWhiteSpace(Model?.Gender)) { <li><strong>Designed for:</strong> @Model!.Gender</li> }
+                        @if (!string.IsNullOrWhiteSpace(Model?.Material)) { <li><strong>Case &amp; strap:</strong> @Model!.Material</li> }
+                        @if (!string.IsNullOrWhiteSpace(Model?.Origin)) { <li><strong>Origin:</strong> @Model!.Origin</li> }
                     </ul>
                 }
             </div>
@@ -106,13 +102,13 @@
         <div class="col-lg-7 mb-4">
             <div class="border p-4 h-100">
                 <h4 class="font-weight-semi-bold mb-3">Product Description</h4>
-                <p class="text-muted" style="white-space: pre-line;">@Model.Description</p>
+                <p class="text-muted" style="white-space: pre-line;">@Model?.Description</p>
             </div>
         </div>
         <div class="col-lg-5">
             <div class="border p-4 h-100">
                 <h4 class="font-weight-semi-bold mb-3">Specifications</h4>
-                @if (Model.Specifications.Count == 0)
+                @if (Model?.Specifications == null || Model.Specifications.Count == 0)
                 {
                     <p class="text-muted mb-0">Specification details will be added soon.</p>
                 }
@@ -135,7 +131,7 @@
 <!-- Specifications End -->
 
 <!-- Related Products Start -->
-@if (Model.RelatedProducts.Count > 0)
+@if (Model?.RelatedProducts != null && Model.RelatedProducts.Count > 0)
 {
     <div class="container-fluid pt-5">
         <div class="text-center mb-4">
@@ -146,9 +142,9 @@
             {
                 <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
                     <div class="card product-item border-0 mb-4">
-                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0" style="height: 300px;">
-                            <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="d-block h-100">
-                                <img class="img-fluid w-100 h-100" src="@Url.Content(product.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@product.Name" style="object-fit: cover;">
+                        <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                            <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="d-block">
+                                <img class="img-fluid w-100" src="@Url.Content(product.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@product.Name">
                             </a>
                             @if (!string.IsNullOrWhiteSpace(product.CategoryName))
                             {
@@ -156,12 +152,14 @@
                             }
                         </div>
                         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
-                            <h6 class="text-truncate mb-3"><a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="text-dark">@product.Name</a></h6>
+                            <h6 class="text-truncate mb-3">
+                                <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="text-dark">@product.Name</a>
+                            </h6>
                             <div class="d-flex justify-content-center">
-                                <h6>@FormatPrice(product.Price)</h6>
-                                @if (product.HasDiscount && product.OriginalPrice.HasValue)
+                                <h6>@FormatPrice((decimal)product.Price)</h6>
+                                @if (product.OriginalPrice.HasValue)
                                 {
-                                    <h6 class="text-muted ml-2"><del>@FormatPrice(product.OriginalPrice.Value)</del></h6>
+                                    <h6 class="text-muted ml-2"><del>@FormatPrice((decimal)product.OriginalPrice.Value)</del></h6>
                                 }
                             </div>
                         </div>
