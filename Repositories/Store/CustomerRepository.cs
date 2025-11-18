@@ -15,6 +15,11 @@ namespace backend.Repositories.Store
             return await _dbSet.FirstOrDefaultAsync(c => c.Email == email);
         }
 
+        public async Task<Customer?> GetByUsernameAsync(string username)
+        {
+            return await _dbSet.FirstOrDefaultAsync(c => c.Username == username);
+        }
+
         public async Task<Customer?> GetCustomerWithOrdersAsync(int customerId)
         {
             return await _dbSet

@@ -44,6 +44,7 @@ namespace backend.Persistance
             modelBuilder.Entity<Customer>(entity =>
             {
                 entity.HasIndex(e => e.Email).IsUnique();
+                entity.HasIndex(e => e.Username).IsUnique();
                 entity.Property(e => e.RegisterDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
 

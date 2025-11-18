@@ -27,6 +27,11 @@ namespace backend.Services.Store
             return await _customerRepository.GetByEmailAsync(email);
         }
 
+        public async Task<Customer?> GetByUsernameAsync(string username)
+        {
+            return await _customerRepository.GetByUsernameAsync(username);
+        }
+
         public async Task<Customer> CreateAsync(Customer customer)
         {
             await _customerRepository.AddAsync(customer);
