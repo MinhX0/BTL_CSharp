@@ -21,6 +21,50 @@ namespace backend.Controllers
             var vm = new LoginViewModel { ReturnUrl = returnUrl };
             return View(vm);
         }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View(new backend.ViewModels.Account.RegisterViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(backend.ViewModels.Account.RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var existingByEmail = await _customerRepository.GetByEmailAsync(model.Email);
+            var existingByUsername = await _customerRepository.GetByUsernameAsync(model.Username);
+            if (existingByEmail is not null || existingByUsername is not null)
+            {
+                ModelState.AddModelError(string.Empty, "This email or username is already registered. Try logging in.");
+                return View(model);
+            }
+
+            var customer = new backend.Entities.Store.Customer
+            {
+                FullName = model.FullName,
+                Email = model.Email,
+                Username = model.Username,
+                PasswordHash = model.Password, // NOTE: use hashing in production
+                Phone = model.Phone,
+                Address = model.Address
+            };
+
+            await _customerRepository.AddAsync(customer);
+
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTimeOffset.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("AuthCustomerId", customer.CustomerId.ToString(), cookieOptions);
+
+            return RedirectToAction("MyAccount");
+        }
         
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -112,8 +156,8 @@ namespace backend.Controllers
                 return RedirectToAction("Index", "Admin");
             }
 
-            // Otherwise try customer login (customers log in with email)
-            var customer = await _customerRepository.GetByEmailAsync(model.Username);
+            // Otherwise try customer login (customers log in with username)
+            var customer = await _customerRepository.GetByUsernameAsync(model.Username);
             if (customer is null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid username or password.");
@@ -172,7 +216,7 @@ namespace backend.Controllers
             var vm = new MyAccountViewModel
             {
                 UserId = customer.CustomerId,
-                Username = customer.Email,
+                Username = customer.Username,
                 FullName = customer.FullName,
                 Email = customer.Email,
                 Phone = customer.Phone ?? string.Empty,
