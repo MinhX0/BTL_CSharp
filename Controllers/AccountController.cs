@@ -1,6 +1,9 @@
 using backend.Repositories.Store;
 using backend.ViewModels.Account;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -63,14 +66,31 @@ namespace backend.Controllers
 
             Response.Cookies.Append("AuthCustomerId", customer.CustomerId.ToString(), cookieOptions);
 
+            // Sign in newly registered customer
+            var customerClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, customer.CustomerId.ToString()),
+                new Claim(ClaimTypes.Name, customer.Username ?? customer.Email),
+                new Claim(ClaimTypes.Role, "Customer")
+            };
+
+            var customerIdentity = new ClaimsIdentity(customerClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(customerIdentity), new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+            });
+
             return RedirectToAction("MyAccount");
         }
         
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> UpdateAccount(MyAccountViewModel model)
         {
-            if (!Request.Cookies.TryGetValue("AuthCustomerId", out var userIdStr) || !int.TryParse(userIdStr, out var userId))
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userIdStr) || !int.TryParse(userIdStr, out var userId))
             {
                 return RedirectToAction("Login", new { returnUrl = Url.Action("MyAccount") });
             }
@@ -94,9 +114,11 @@ namespace backend.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> ChangePassword(int userId, string CurrentPassword, string NewPassword, string ConfirmPassword)
         {
-            if (!Request.Cookies.TryGetValue("AuthCustomerId", out var userIdStr) || !int.TryParse(userIdStr, out var cookieUserId) || cookieUserId != userId)
+            var cookieUserIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(cookieUserIdStr) || !int.TryParse(cookieUserIdStr, out var cookieUserId) || cookieUserId != userId)
             {
                 return RedirectToAction("Login", new { returnUrl = Url.Action("MyAccount") });
             }
@@ -152,6 +174,26 @@ namespace backend.Controllers
                 }
 
                 Response.Cookies.Append("AuthAdminId", admin.AdminId.ToString(), cookieOptions);
+
+                // Sign in principal for cookie authentication
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, admin.AdminId.ToString()),
+                    new Claim(ClaimTypes.Name, admin.Username ?? string.Empty),
+                    new Claim(ClaimTypes.Role, "Admin")
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                HttpContext.Session.SetString("AuthAdminId", admin.AdminId.ToString());
+                HttpContext.Session.SetString("Username", admin.Username ?? string.Empty);
+                HttpContext.Session.SetString("IsSignedIn", "1");
                 // Redirect admins to the admin area/controller
                 return RedirectToAction("Index", "Admin");
             }
@@ -172,17 +214,39 @@ namespace backend.Controllers
 
             Response.Cookies.Append("AuthCustomerId", customer.CustomerId.ToString(), cookieOptions);
 
+            // Sign in customer principal
+            var customerClaims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, customer.CustomerId.ToString()),
+                new Claim(ClaimTypes.Name, customer.Username ?? customer.Email),
+                new Claim(ClaimTypes.Role, "Customer")
+            };
+
+            var customerIdentity = new ClaimsIdentity(customerClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(customerIdentity), new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
+            });
+
+            // Persist session server-side so UI can read logged-in state even when cookie auth hasn't yet been established
+            HttpContext.Session.SetString("AuthCustomerId", customer.CustomerId.ToString());
+            HttpContext.Session.SetString("Username", customer.Username ?? customer.Email);
+
+            // Carve out a server-side flag to indicate sign-in has completed
+            HttpContext.Session.SetString("IsSignedIn", "1");
+
             if (!string.IsNullOrWhiteSpace(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
                 return Redirect(model.ReturnUrl);
             }
 
-            return RedirectToAction("MyAccount");
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
             if (Request.Cookies.ContainsKey("AuthCustomerId"))
             {
@@ -194,13 +258,24 @@ namespace backend.Controllers
                 Response.Cookies.Delete("AuthAdminId");
             }
 
-            return RedirectToAction("Index", "Home");
+            // Clear server-side session state
+            HttpContext.Session.Remove("AuthCustomerId");
+            HttpContext.Session.Remove("AuthAdminId");
+            HttpContext.Session.Remove("Username");
+            HttpContext.Session.Remove("IsSignedIn");
+
+            // Sign out cookie authentication
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         [HttpGet]
+        [Microsoft.AspNetCore.Authorization.Authorize]
         public async Task<IActionResult> MyAccount()
         {
-            if (!Request.Cookies.TryGetValue("AuthCustomerId", out var userIdStr) || !int.TryParse(userIdStr, out var userId))
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userIdStr) || !int.TryParse(userIdStr, out var userId))
             {
                 return RedirectToAction("Login", new { returnUrl = Url.Action("MyAccount") });
             }

@@ -40,10 +40,6 @@
             </form>
         </div>
         <div class="col-lg-3 col-6 text-right">
-            <a href="#" class="btn border">
-                <i class="fas fa-heart text-primary"></i>
-                <span class="badge">0</span>
-            </a>
             <a asp-controller="Store" asp-action="Cart" class="btn border">
                 <i class="fas fa-shopping-cart text-primary"></i>
                 <span class="badge">0</span>
@@ -84,8 +80,21 @@
                         <a asp-controller="Store" asp-action="Contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
-                        <a asp-controller="Account" asp-action="Login" class="nav-item nav-link">Login</a>
-                        <a asp-controller="Account" asp-action="MyAccount" class="nav-item nav-link">My Account</a>
+                        @if (User?.Identity?.IsAuthenticated == true || Context?.Session?.GetString("IsSignedIn") == "1")
+                        {
+                            var name = User?.Identity?.Name ?? Context.Session.GetString("Username");
+                            <span class="nav-item nav-link">Hello, @name</span>
+                            <a asp-controller="Account" asp-action="MyAccount" class="nav-item nav-link">My Account</a>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-link nav-link text-left">Logout</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="nav-item nav-link">Login</a>
+                            <a asp-controller="Account" asp-action="Register" class="nav-item nav-link">Register</a>
+                        }
                     </div>
                 </div>
             </nav>

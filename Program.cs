@@ -32,6 +32,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 
+// Add server-side session to persist small bits of user state on the server
+builder.Services.AddSession(options =>
+{
+    // keep session alive for 7 days for "remember me" behavior
+    options.IdleTimeout = TimeSpan.FromDays(7);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -105,6 +114,7 @@ if (!string.IsNullOrWhiteSpace(categoryImagesPath) && Directory.Exists(categoryI
 }
 
 app.UseAuthentication();
+app.UseSession();
 app.UseAuthorization();
 
 // Map MVC controller routes for Razor views
