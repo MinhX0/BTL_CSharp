@@ -1,108 +1,74 @@
-@using System.Globalization
-@using System.Linq
+@model backend.ViewModels.Store.CartViewModel
 @{
-    ViewData["Title"] = "Cart";
-
-    var cartItems = new[]
-    {
-        new { Image = "/img/product-1.jpg", Name = "ChronoLux Stainless Steel", Price = 249m, Quantity = 1 },
-        new { Image = "/img/product-5.jpg", Name = "Heritage Skeleton Automatic", Price = 359m, Quantity = 1 },
-        new { Image = "/img/product-8.jpg", Name = "PulseFit Smartwatch", Price = 189m, Quantity = 2 }
-    };
-
-    decimal subtotal = cartItems.Sum(item => item.Price * item.Quantity);
-    const decimal shipping = 12m;
-    decimal total = subtotal + shipping;
-
-    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
+    ViewData["Title"] = "Your Cart";
 }
-
-<!-- Page Header Start -->
-<div class="container-fluid bg-secondary mb-5">
-    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3">Shopping Cart</h1>
-        <div class="d-inline-flex">
-            <p class="m-0"><a asp-controller="Store" asp-action="Index">Home</a></p>
-            <p class="m-0 px-2">-</p>
-            <p class="m-0">Shopping Cart</p>
-        </div>
-    </div>
-</div>
-<!-- Page Header End -->
-
-<!-- Cart Start -->
-<div class="container-fluid pt-5">
-    <div class="row px-xl-5">
-        <div class="col-lg-8 table-responsive mb-5">
-            <table class="table table-bordered text-center mb-0">
-                <thead class="bg-secondary text-dark">
+<div class="container pt-5">
+    <h2 class="mb-4">Shopping Cart</h2>
+    @if (TempData["Success"] != null) {<div class="alert alert-success">@TempData["Success"]</div>}
+    @if (TempData["Info"] != null) {<div class="alert alert-info">@TempData["Info"]</div>}
+    @if (TempData["Error"] != null) {<div class="alert alert-danger">@TempData["Error"]</div>}
+    @if (Model.Items == null || !Model.Items.Any())
+    {
+        <p class="text-muted">Your cart is empty.</p>
+        <a asp-controller="Store" asp-action="Shop" class="btn btn-primary">Continue Shopping</a>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="thead-light">
                     <tr>
-                        <th>Products</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Remove</th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th class="text-center" style="width:140px">Quantity</th>
+                        <th class="text-right">Unit Price</th>
+                        <th class="text-right">Total</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody class="align-middle">
-                    @foreach (var item in cartItems)
-                    {
-                        <tr>
-                            <td class="align-middle text-left">
-                                <img src="@item.Image" alt="@item.Name" style="width: 60px;" class="mr-2 rounded">
-                                @item.Name
-                            </td>
-                            <td class="align-middle">@FormatPrice(item.Price)</td>
-                            <td class="align-middle">
-                                <div class="input-group quantity mx-auto" style="width: 120px;">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-sm btn-primary btn-minus" type="button"><i class="fa fa-minus"></i></button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm bg-secondary text-center" value="@item.Quantity">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-sm btn-primary btn-plus" type="button"><i class="fa fa-plus"></i></button>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="align-middle">@FormatPrice(item.Price * item.Quantity)</td>
-                            <td class="align-middle"><button class="btn btn-sm btn-primary" type="button"><i class="fa fa-times"></i></button></td>
-                        </tr>
-                    }
+                <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="@Url.Content(item.ImageUrl ?? "~/template/img/product-1.jpg")" alt="@item.Name" style="width:60px;height:60px;object-fit:cover" class="mr-2" />
+                                <a asp-controller="Store" asp-action="Detail" asp-route-id="@item.ProductId">@item.Name</a>
+                            </div>
+                        </td>
+                        <td>@item.CategoryName</td>
+                        <td class="text-center">
+                            <form asp-controller="Store" asp-action="UpdateCart" method="post" class="form-inline justify-content-center">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <input type="number" name="quantity" value="@item.Quantity" min="0" class="form-control form-control-sm" style="width:80px" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary ml-2">Update</button>
+                            </form>
+                        </td>
+                        <td class="text-right">@String.Format(System.Globalization.CultureInfo.GetCultureInfo("en-US"), "{0:C0}", item.UnitPrice)</td>
+                        <td class="text-right">@String.Format(System.Globalization.CultureInfo.GetCultureInfo("en-US"), "{0:C0}", item.LineTotal)</td>
+                        <td>
+                            <form asp-controller="Store" asp-action="RemoveFromCart" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-right">Subtotal</th>
+                        <th class="text-right">@String.Format(System.Globalization.CultureInfo.GetCultureInfo("en-US"), "{0:C0}", Model.Subtotal)</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
-        <div class="col-lg-4">
-            <form class="mb-5">
-                <div class="input-group">
-                    <input type="text" class="form-control p-4" placeholder="Coupon Code">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="button">Apply Coupon</button>
-                    </div>
-                </div>
-            </form>
-            <div class="card border-secondary mb-5">
-                <div class="card-header bg-secondary border-0">
-                    <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-3 pt-1">
-                        <h6 class="font-weight-medium">Subtotal</h6>
-                        <h6 class="font-weight-medium">@FormatPrice(subtotal)</h6>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <h6 class="font-weight-medium">Shipping</h6>
-                        <h6 class="font-weight-medium">@FormatPrice(shipping)</h6>
-                    </div>
-                </div>
-                <div class="card-footer border-secondary bg-transparent">
-                    <div class="d-flex justify-content-between mt-2">
-                        <h5 class="font-weight-bold">Total</h5>
-                        <h5 class="font-weight-bold">@FormatPrice(total)</h5>
-                    </div>
-                    <a asp-controller="Store" asp-action="Checkout" class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</a>
-                </div>
-            </div>
+        <div class="d-flex justify-content-between mt-3">
+            <a asp-controller="Store" asp-action="Shop" class="btn btn-outline-secondary">Continue Shopping</a>
+            <a asp-controller="Store" asp-action="Checkout" class="btn btn-primary">Proceed to Checkout</a>
         </div>
-    </div>
+    }
 </div>
-<!-- Cart End -->

@@ -28,13 +28,13 @@
             </a>
         </div>
         <div class="col-lg-6 col-6 text-left">
-            <form>
+            <form asp-controller="Store" asp-action="Shop" method="get" class="w-100">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for products">
+                    <input type="text" name="search" class="form-control" placeholder="Search for products..." value="@Context.Request.Query["search"]" />
                     <div class="input-group-append">
-                        <span class="input-group-text bg-transparent text-primary">
+                        <button class="input-group-text bg-transparent text-primary" type="submit" style="border:none;background:none;cursor:pointer;">
                             <i class="fa fa-search"></i>
-                        </span>
+                        </button>
                     </div>
                 </div>
             </form>
@@ -75,8 +75,6 @@
                     <div class="navbar-nav mr-auto py-0">
                         <a asp-controller="Home" asp-action="Index" class="nav-item nav-link">Home</a>
                         <a asp-controller="Store" asp-action="Shop" class="nav-item nav-link">Shop</a>
-                        <a asp-controller="Store" asp-action="Cart" class="nav-item nav-link">Shop Cart</a>
-                        <a asp-controller="Store" asp-action="Checkout" class="nav-item nav-link">Checkout</a>
                         <a asp-controller="Store" asp-action="Contact" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
