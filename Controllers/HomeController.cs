@@ -70,84 +70,26 @@ namespace backend.Controllers
 
         public async Task<IActionResult> Shop(int? categoryId)
         {
-            var categories = await _categoryService.GetAllAsync();
-            var products = await _productService.GetAllAsync();
-
-            var categoriesLookup = categories.ToDictionary(c => c.CategoryId, c => c.CategoryName);
-
-            var filteredProducts = products.Where(p => p.IsActive);
-            
-            if (categoryId.HasValue)
-            {
-                filteredProducts = filteredProducts.Where(p => p.CategoryId == categoryId.Value);
-            }
-
-            var viewModel = new ShopViewModel
-            {
-                Products = filteredProducts
-                    .Select(product => ToProductCardViewModel(product, categoriesLookup))
-                    .ToList()
-            };
-
-            return View(viewModel);
+            // Redirect to Store controller's Shop action to centralize shop handling
+            return RedirectToAction("Shop", "Store", new { categoryId });
         }
 
         public async Task<IActionResult> Detail(int id)
         {
-            var product = await _productService.GetProductWithDetailsAsync(id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-
-            var categoriesLookup = (await _categoryService.GetAllAsync())
-                .ToDictionary(c => c.CategoryId, c => c.CategoryName);
-
-            var relatedProducts = (await _productService.GetByCategoryAsync(product.CategoryId))
-                .Where(p => p.ProductId != product.ProductId && p.IsActive)
-                .OrderBy(p => p.DiscountPrice ?? long.MaxValue)
-                .ThenByDescending(p => p.CreatedDate)
-                .Select(p => ToProductCardViewModel(p, categoriesLookup))
-                .Take(4)
-                .ToList();
-
-            var categoryName = categoriesLookup.TryGetValue(product.CategoryId, out var name)
-                ? name
-                : product.Category?.CategoryName;
-
-            var viewModel = new ProductDetailViewModel
-            {
-                ProductId = product.ProductId,
-                Name = product.ProductName,
-                CategoryName = categoryName,
-                Brand = product.Brand,
-                Price = product.Price,
-                OriginalPrice = product.DiscountPrice,
-                Discount = CalculateDiscountPercentage(product.Price, product.DiscountPrice),
-                ImageUrl = BuildProductImagePath(product),
-                Description = string.IsNullOrWhiteSpace(product.Description)
-                    ? "No description available for this watch yet."
-                    : product.Description,
-                Gender = product.Gender,
-                Origin = product.Origin,
-                MovementType = product.MovementType,
-                Material = product.Material,
-                StockQuantity = product.StockQuantity,
-                Specifications = BuildSpecifications(product),
-                RelatedProducts = relatedProducts
-            };
-
-            return View(viewModel);
+            // Redirect to Store controller's Detail action to centralize product details logic
+            return RedirectToAction("Detail", "Store", new { id });
         }
 
         public IActionResult Cart()
         {
-            return View();
+            // Cart should be handled by Store controller
+            return RedirectToAction("Cart", "Store");
         }
 
         public IActionResult Checkout()
         {
-            return View();
+            // Checkout handled by Store controller
+            return RedirectToAction("Checkout", "Store");
         }
 
         public IActionResult Contact()

@@ -275,6 +275,13 @@ namespace backend.Controllers
         public async Task<IActionResult> MyAccount()
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            // if the authenticated user is an admin, redirect to the admin area/dashboard
+            if (!string.IsNullOrWhiteSpace(role) && role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectToAction("Index", "Admin");
+            }
             if (string.IsNullOrWhiteSpace(userIdStr) || !int.TryParse(userIdStr, out var userId))
             {
                 return RedirectToAction("Login", new { returnUrl = Url.Action("MyAccount") });
@@ -283,9 +290,12 @@ namespace backend.Controllers
             var customer = await _customerRepository.GetByIdAsync(userId);
             if (customer is null)
             {
-                // invalid cookie
+                // If we could not find a customer with the authenticated id, sign them out as an emergency measure.
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 Response.Cookies.Delete("AuthCustomerId");
-                return RedirectToAction("Login");
+                HttpContext.Session.Remove("AuthCustomerId");
+                HttpContext.Session.Remove("IsSignedIn");
+                return RedirectToAction("Login", new { returnUrl = Url.Action("MyAccount") });
             }
 
             var vm = new MyAccountViewModel

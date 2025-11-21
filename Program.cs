@@ -77,17 +77,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Serve static files from wwwroot (default)
+// Serve static files from wwwroot (default - contains CSS, JS, lib)
 app.UseStaticFiles();
 
-// Serve template assets (CSS/JS/img)
-var templateAssetsPath = Path.Combine(builder.Environment.ContentRootPath, "template");
-if (Directory.Exists(templateAssetsPath))
+// Serve template images (still in template/img for now)
+var templateImagesPath = Path.Combine(builder.Environment.ContentRootPath, "template", "img");
+if (Directory.Exists(templateImagesPath))
 {
     app.UseStaticFiles(new StaticFileOptions
     {
-        FileProvider = new PhysicalFileProvider(templateAssetsPath),
-        RequestPath = ""
+        FileProvider = new PhysicalFileProvider(templateImagesPath),
+        RequestPath = "/img"
     });
 }
 
@@ -117,10 +117,15 @@ app.UseAuthentication();
 app.UseSession();
 app.UseAuthorization();
 
+// Configure error pages and status code handling
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+// Global exception handler (500)
+app.UseExceptionHandler("/Error/500");
+
 // Map MVC controller routes for Razor views
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Store}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // Keep API controllers
 app.MapControllers();

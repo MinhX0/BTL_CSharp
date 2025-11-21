@@ -1,0 +1,39 @@
+@model int
+@{
+    // Model is the numeric status code
+    var code = Model;
+    var title = code switch
+    {
+        401 => "401 - Unauthorized",
+        404 => "404 - Not Found",
+        500 => "500 - Server Error",
+        _ => $"{code} - Error"
+    };
+
+    var message = code switch
+    {
+        401 => "You need to sign in to access this page. Please sign in and try again.",
+        404 => "The page you are looking for could not be found. It may have been removed or you typed the address incorrectly.",
+        500 => "Something went wrong on our end. We're working on it — please try again later.",
+        _ => "An error occurred while processing your request."
+    };
+
+    ViewData["Title"] = title;
+}
+
+<div class="container-fluid pt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 text-danger">@title</h1>
+            <p class="lead">@message</p>
+            <div class="mt-3">
+                @if (code == 401)
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Sign In</a>
+                }
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary ml-2">Return Home</a>
+                <a asp-controller="Store" asp-action="Contact" class="btn btn-link ml-2">Contact Support</a>
+            </div>
+        </div>
+    </div>
+</div>

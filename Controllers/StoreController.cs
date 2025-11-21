@@ -16,53 +16,10 @@ namespace backend.Controllers
             _categoryService = categoryService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var categories = (await _categoryService.GetAllAsync()).ToList();
-            var products = (await _productService.GetAllAsync()).ToList();
-
-            var productsByCategory = products
-                .GroupBy(p => p.CategoryId)
-                .ToDictionary(g => g.Key, g => g.Count());
-
-            var categorySummaries = categories
-                .Select(category => new CategorySummaryViewModel
-                {
-                    CategoryId = category.CategoryId,
-                    Name = category.CategoryName,
-                    ProductCount = productsByCategory.TryGetValue(category.CategoryId, out var count) ? count : 0,
-                    ImageUrl = BuildCategoryImagePath(category)
-                })
-                .OrderByDescending(c => c.ProductCount)
-                .ThenBy(c => c.Name)
-                .Take(6)
-                .ToList();
-
-            var categoriesLookup = categories.ToDictionary(c => c.CategoryId, c => c.CategoryName);
-
-            var trendingProducts = products
-                .Where(p => p.IsActive && p.DiscountPrice.HasValue)
-                .OrderBy(p => p.DiscountPrice)
-                .ThenByDescending(p => p.Price)
-                .Select(product => ToProductCardViewModel(product, categoriesLookup))
-                .Take(8)
-                .ToList();
-
-            var newArrivals = products
-                .OrderByDescending(p => p.CreatedDate)
-                .ThenByDescending(p => p.ProductId)
-                .Select(product => ToProductCardViewModel(product, categoriesLookup))
-                .Take(8)
-                .ToList();
-
-            var viewModel = new IndexViewModel
-            {
-                Categories = categorySummaries,
-                TrendingProducts = trendingProducts,
-                NewArrivals = newArrivals
-            };
-
-            return View(viewModel);
+            // Redirect homepage to the Home controller's Index action — the Store controller now focuses on shop actions only.
+            return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> Shop(int? categoryId)
@@ -150,7 +107,8 @@ namespace backend.Controllers
 
         public IActionResult Contact()
         {
-            return View();
+            // Contact page belongs to Home controller; redirect to central location
+            return RedirectToAction("Contact", "Home");
         }
 
         private static ProductCardViewModel ToProductCardViewModel(Product product, IReadOnlyDictionary<int, string> categoriesLookup)
