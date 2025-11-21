@@ -1,0 +1,40 @@
+@model backend.ViewModels.Admin.CategoryListViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Categories";
+}
+<div class="admin-card">
+    <h3>Categories</h3>
+    <div class="mb-3">
+        <a asp-controller="Admin" asp-action="CreateCategory" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> New Category</a>
+    </div>
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Products</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var c in Model.Categories)
+            {
+                <tr>
+                    <td>@c.CategoryId</td>
+                    <td>@c.Name</td>
+                    <td>@c.ProductCount</td>
+                    <td>
+                        <a asp-controller="Admin" asp-action="EditCategory" asp-route-id="@c.CategoryId" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
+                        <form asp-controller="Admin" asp-action="DeleteCategory" method="post" style="display:inline;" onsubmit="return confirm('Delete this category?');">
+                            <input type="hidden" name="id" value="@c.CategoryId" />
+                            <button type="submit" class="btn-action btn-delete"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+@model backend.ViewModels.Admin.OrderDetailViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Order #" + Model.OrderId;
+    string FormatCurrency(decimal v) => v.ToString("N0");
+}
+<div class="admin-card">
+    <h3>Order Details</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Customer:</strong> @Model.CustomerName (@Model.CustomerEmail)</p>
+            @if (!string.IsNullOrWhiteSpace(Model.CustomerPhone)) {<p><strong>Phone:</strong> @Model.CustomerPhone</p>}
+            @if (!string.IsNullOrWhiteSpace(Model.ShippingAddress)) {<p><strong>Address:</strong> @Model.ShippingAddress</p>}
+            <p><strong>Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Total Amount:</strong> @FormatCurrency(Model.TotalAmount)</p>
+            <form asp-controller="Admin" asp-action="UpdateOrderStatus" method="post" class="form-inline">
+                <input type="hidden" name="orderId" value="@Model.OrderId" />
+                <select name="status" class="form-control mr-2">
+                    <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+                    <option value="Shipped" selected="@(Model.Status == "Shipped")">Shipped</option>
+                    <option value="Completed" selected="@(Model.Status == "Completed")">Completed</option>
+                    <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Cancelled</option>
+                </select>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-sync"></i> Update</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="admin-card">
+    <h3>Items</h3>
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var i in Model.Items)
+            {
+                <tr>
+                    <td>@i.ProductName</td>
+                    <td>@i.Quantity</td>
+                    <td>@FormatCurrency(i.UnitPrice)</td>
+                    <td>@FormatCurrency(i.Subtotal)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

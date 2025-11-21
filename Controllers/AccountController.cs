@@ -156,53 +156,18 @@ namespace backend.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-            // First check admin accounts (admin login uses username)
-            var admin = await _adminRepository.GetByUsernameAsync(model.Username);
+            // Customer-only login; admin users must use /Admin/Login
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.UtcNow.AddDays(7)
             };
 
-            if (admin is not null)
-            {
-                // For now passwords are compared as plaintext - replace with proper hashing
-                if (admin.PasswordHash != model.Password)
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid username or password.");
-                    return View(model);
-                }
-
-                Response.Cookies.Append("AuthAdminId", admin.AdminId.ToString(), cookieOptions);
-
-                // Sign in principal for cookie authentication
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, admin.AdminId.ToString()),
-                    new Claim(ClaimTypes.Name, admin.Username ?? string.Empty),
-                    new Claim(ClaimTypes.Role, "Admin")
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProperties = new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7)
-                };
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-                HttpContext.Session.SetString("AuthAdminId", admin.AdminId.ToString());
-                HttpContext.Session.SetString("Username", admin.Username ?? string.Empty);
-                HttpContext.Session.SetString("IsSignedIn", "1");
-                // Redirect admins to the admin area/controller
-                return RedirectToAction("Index", "Admin");
-            }
-
-            // Otherwise try customer login (customers log in with username)
+            // Customers log in with username
             var customer = await _customerRepository.GetByUsernameAsync(model.Username);
             if (customer is null)
             {
-                ModelState.AddModelError(string.Empty, "Invalid username or password.");
+                ModelState.AddModelError(string.Empty, "Invalid username or password (customer accounts only). For admin use /Admin/Login.");
                 return View(model);
             }
 
@@ -277,10 +242,10 @@ namespace backend.Controllers
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var role = User.FindFirstValue(ClaimTypes.Role);
 
-            // if the authenticated user is an admin, redirect to the admin area/dashboard
-            if (!string.IsNullOrWhiteSpace(role) && role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            // Block admin roles from MyAccount (they should use admin area explicitly)
+            if (!string.IsNullOrWhiteSpace(role) && (role.Equals("Owner", StringComparison.OrdinalIgnoreCase) || role.Equals("Manager", StringComparison.OrdinalIgnoreCase) || role.Equals("Staff", StringComparison.OrdinalIgnoreCase)))
             {
-                return RedirectToAction("Index", "Admin");
+                return Forbid();
             }
             if (string.IsNullOrWhiteSpace(userIdStr) || !int.TryParse(userIdStr, out var userId))
             {

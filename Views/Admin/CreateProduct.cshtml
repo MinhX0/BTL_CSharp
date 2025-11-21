@@ -1,0 +1,44 @@
+@model backend.ViewModels.Admin.ProductFormViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Create Product";
+}
+<div class="admin-card">
+    <h3>Create Product</h3>
+    <form asp-controller="Admin" asp-action="CreateProduct" method="post">
+        <div class="form-group">
+            <label for="Name">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Description">Description</label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Price">Price</label>
+            <input asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="Stock">Stock</label>
+            <input asp-for="Stock" class="form-control" />
+            <span asp-validation-for="Stock" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="CategoryId">Category</label>
+            <select asp-for="CategoryId" class="form-control" asp-items="@(new SelectList(Model.Categories, "CategoryId", "Name"))"></select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="ImageUrl">Image URL</label>
+            <input asp-for="ImageUrl" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+        <a asp-controller="Admin" asp-action="Products" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

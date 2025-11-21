@@ -1,0 +1,79 @@
+@model backend.ViewModels.Admin.OrderListViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Orders";
+    string FormatCurrency(decimal v) => v.ToString("N0");
+}
+<div class="admin-card">
+    <h3>Orders</h3>
+    <div class="search-box">
+        <form method="get" style="width:100%; display:flex; gap:10px;">
+            <select name="status" class="form-control" style="max-width:200px;">
+                <option value="">All Statuses</option>
+                <option value="Pending" selected="@(Model.StatusFilter == "Pending")">Pending</option>
+                <option value="Shipped" selected="@(Model.StatusFilter == "Shipped")">Shipped</option>
+                <option value="Completed" selected="@(Model.StatusFilter == "Completed")">Completed</option>
+                <option value="Cancelled" selected="@(Model.StatusFilter == "Cancelled")">Cancelled</option>
+            </select>
+            <button type="submit"><i class="fas fa-filter"></i> Filter</button>
+        </form>
+    </div>
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Items</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var o in Model.Orders)
+            {
+                var statusClass = o.Status.ToLower() switch
+                {
+                    "pending" => "badge badge-warning",
+                    "shipped" => "badge badge-info",
+                    "completed" => "badge badge-success",
+                    "cancelled" => "badge badge-danger",
+                    _ => "badge badge-secondary"
+                };
+                <tr>
+                    <td>@o.OrderId</td>
+                    <td>@o.CustomerName</td>
+                    <td>@o.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td><span class="@statusClass">@o.Status</span></td>
+                    <td>@FormatCurrency(o.TotalAmount)</td>
+                    <td>@o.ItemCount</td>
+                    <td>
+                        <a asp-controller="Admin" asp-action="OrderDetail" asp-route-id="@o.OrderId" class="btn-action btn-view"><i class="fas fa-eye"></i></a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.TotalCount > Model.PageSize)
+    {
+        <div class="pagination">
+            @{
+                var totalPages = (int)System.Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+            }
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                if (i == Model.PageIndex)
+                {
+                    <span class="active">@i</span>
+                }
+                else
+                {
+                    <a asp-controller="Admin" asp-action="Orders" asp-route-page="@i" asp-route-status="@Model.StatusFilter">@i</a>
+                }
+            }
+        </div>
+    }
+</div>

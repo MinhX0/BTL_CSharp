@@ -18,15 +18,16 @@ namespace backend.Configurations
                 throw new InvalidOperationException("JWT Key is missing in configuration.");
             }
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            // Do NOT override the existing default (cookie) authentication scheme.
+            // Simply add JWT bearer as an additional scheme so APIs can opt-in via
+            // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)].
+            services.AddAuthentication()
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(jwtKey)
-                        ),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
                         ValidateIssuer = true,
                         ValidIssuer = issuer,
                         ValidateAudience = true,

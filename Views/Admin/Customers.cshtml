@@ -1,0 +1,62 @@
+@model backend.ViewModels.Admin.CustomerListViewModel
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Customers";
+}
+<div class="admin-card">
+    <h3>Customers</h3>
+    <div class="search-box">
+        <form method="get" class="form-inline" style="width:100%;">
+            <input type="text" name="search" value="@Model.SearchTerm" placeholder="Search customers..." />
+            <button type="submit"><i class="fas fa-search"></i> Search</button>
+        </form>
+    </div>
+    <div class="admin-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Phone</th>
+                    <th>Orders</th>
+                    <th>Spent</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var c in Model.Customers)
+            {
+                <tr>
+                    <td>@c.CustomerId</td>
+                    <td>@c.FullName</td>
+                    <td>@c.Email</td>
+                    <td>@c.Username</td>
+                    <td>@c.Phone</td>
+                    <td>@c.TotalOrders</td>
+                    <td>@c.TotalSpent.ToString("N0")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.TotalCount > Model.PageSize)
+    {
+        <div class="pagination">
+            @{
+                var totalPages = (int)System.Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+            }
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                if (i == Model.PageIndex)
+                {
+                    <span class="active">@i</span>
+                }
+                else
+                {
+                    <a asp-controller="Admin" asp-action="Customers" asp-route-page="@i" asp-route-search="@Model.SearchTerm">@i</a>
+                }
+            }
+        </div>
+    }
+</div>
