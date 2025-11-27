@@ -1,8 +1,8 @@
 @model ProductDetailViewModel
 @using System.Globalization
 @{
-    ViewData["Title"] = Model?.Name ?? "Product Detail";
-    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
+    ViewData["Title"] = Model?.Name ?? "Chi tiết sản phẩm";
+    string FormatPrice(decimal value) => string.Format(CultureInfo.CurrentCulture, "{0:C0}", value);
 }
 
 <!-- Breadcrumb Start -->
@@ -10,11 +10,11 @@
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 200px">
         <h1 class="font-weight-semi-bold text-uppercase mb-3">@Model?.Name</h1>
         <div class="d-inline-flex">
-            <p class="m-0"><a asp-controller="Store" asp-action="Index">Home</a></p>
+            <p class="m-0"><a asp-controller="Store" asp-action="Index">Trang chủ</a></p>
             <p class="m-0 px-2">-</p>
-            <p class="m-0"><a asp-controller="Store" asp-action="Shop">Shop</a></p>
+            <p class="m-0"><a asp-controller="Store" asp-action="Shop">Cửa hàng</a></p>
             <p class="m-0 px-2">-</p>
-            <p class="m-0">Product detail</p>
+            <p class="m-0">Chi tiết sản phẩm</p>
         </div>
     </div>
 </div>
@@ -34,13 +34,13 @@
             @if (!string.IsNullOrWhiteSpace(Model?.CategoryName) || !string.IsNullOrWhiteSpace(Model?.Brand))
             {
                 <p class="text-muted mb-2">
-                    @if (!string.IsNullOrWhiteSpace(Model?.Brand))
+                        @if (!string.IsNullOrWhiteSpace(Model?.Brand))
                     {
-                        <span class="mr-2"><strong>Brand:</strong> @Model!.Brand</span>
+                        <span class="mr-2"><strong>Thương hiệu:</strong> @Model!.Brand</span>
                     }
                     @if (!string.IsNullOrWhiteSpace(Model?.CategoryName))
                     {
-                        <span><strong>Collection:</strong> @Model!.CategoryName</span>
+                        <span><strong>Bộ sưu tập:</strong> @Model!.CategoryName</span>
                     }
                 </p>
             }
@@ -58,15 +58,15 @@
             </div>
 
             <div class="mb-4">
-                <p class="mb-1"><strong>Status:</strong></p>
+                <p class="mb-1"><strong>Trạng thái:</strong></p>
                 <p class="mb-1">
                     @if ((Model?.StockQuantity ?? 0) > 0)
                     {
-                        <span class="text-success">In Stock (@Model!.StockQuantity in inventory)</span>
+                        <span class="text-success">Còn hàng (@Model!.StockQuantity trong kho)</span>
                     }
                     else
                     {
-                        <span class="text-danger">Temporarily unavailable</span>
+                        <span class="text-danger">Tạm thời hết hàng</span>
                     }
                 </p>
             </div>
@@ -92,9 +92,9 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="productId" value="@(Model?.ProductId ?? 0)" />
                     <input type="hidden" name="quantity" value="1" />
-                    <button type="submit" class="btn btn-primary px-4"><i class="fas fa-shopping-cart mr-2"></i>Add To Cart</button>
+                    <button type="submit" class="btn btn-primary px-4"><i class="fas fa-shopping-cart mr-2"></i>Thêm vào giỏ</button>
                 </form>
-                <a asp-controller="Store" asp-action="Shop" class="btn btn-outline-secondary px-4 ml-3">Continue Shopping</a>
+                <a asp-controller="Store" asp-action="Shop" class="btn btn-outline-secondary px-4 ml-3">Tiếp tục mua sắm</a>
             </div>
         </div>
     </div>
@@ -106,16 +106,16 @@
     <div class="row px-xl-5">
         <div class="col-lg-7 mb-4">
             <div class="border p-4 h-100">
-                <h4 class="font-weight-semi-bold mb-3">Product Description</h4>
+                <h4 class="font-weight-semi-bold mb-3">Mô tả sản phẩm</h4>
                 <p class="text-muted" style="white-space: pre-line;">@Model?.Description</p>
             </div>
         </div>
         <div class="col-lg-5">
             <div class="border p-4 h-100">
-                <h4 class="font-weight-semi-bold mb-3">Specifications</h4>
+                <h4 class="font-weight-semi-bold mb-3">Thông số kỹ thuật</h4>
                 @if (Model?.Specifications == null || Model.Specifications.Count == 0)
                 {
-                    <p class="text-muted mb-0">Specification details will be added soon.</p>
+                    <p class="text-muted mb-0">Thông số sẽ được cập nhật sớm.</p>
                 }
                 else
                 {
@@ -140,7 +140,7 @@
 {
     <div class="container-fluid pt-5">
         <div class="text-center mb-4">
-            <h2 class="section-title px-5"><span class="px-2">You May Also Like</span></h2>
+            <h2 class="section-title px-5"><span class="px-2">Có thể bạn thích</span></h2>
         </div>
         <div class="row px-xl-5 pb-3">
             @foreach (var product in Model.RelatedProducts)
@@ -169,12 +169,12 @@
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Quick View</a>
+                            <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem</a>
                             <form asp-controller="Store" asp-action="AddToCart" method="post" class="m-0 p-0 add-to-cart-form" data-product-id="@product.ProductId">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="productId" value="@product.ProductId" />
                                 <input type="hidden" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-sm text-dark p-0 add-to-cart-btn"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
+                                <button type="submit" class="btn btn-sm text-dark p-0 add-to-cart-btn"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ</button>
                             </form>
                         </div>
                     </div>
@@ -190,13 +190,13 @@
                                 data: formData,
                                 headers: { 'RequestVerificationToken': $form.find('input[name="__RequestVerificationToken"]').val() },
                                 success: function() {
-                                    showToast('Added to cart!');
+                                    showToast('Đã thêm vào giỏ hàng!');
                                 },
                                 error: function(xhr) {
                                     if (xhr.status === 401) {
                                         window.location = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
                                     } else {
-                                        showToast('Could not add to cart.', true);
+                                        showToast('Không thể thêm vào giỏ.', true);
                                     }
                                 }
                             });
@@ -204,7 +204,7 @@
                         function showToast(msg, isError) {
                             var $toast = $('<div class="toast position-fixed" style="top:20px;right:20px;z-index:9999;min-width:200px;">'
                                 + '<div class="toast-header ' + (isError ? 'bg-danger' : 'bg-success') + ' text-white">'
-                                + '<strong class="mr-auto">Cart</strong>'
+                                    + '<strong class="mr-auto">Giỏ hàng</strong>'
                                 + '<button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">&times;</button>'
                                 + '</div>'
                                 + '<div class="toast-body">' + msg + '</div>'

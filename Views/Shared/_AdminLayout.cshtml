@@ -1,5 +1,5 @@
 @{
-    var title = ViewData["Title"] as string ?? "Admin Dashboard";
+    var title = ViewData["Title"] as string ?? "Bảng quản trị";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -18,31 +18,31 @@
 <body class="admin">
     <div class="admin-sidebar">
         <div class="brand">
-            <h3><i class="fas fa-shield-alt"></i> Admin Panel</h3>
+            <h3><i class="fas fa-shield-alt"></i> Bảng quản trị</h3>
         </div>
         <nav class="nav flex-column">
             <a asp-controller="Admin" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
+                <i class="fas fa-tachometer-alt"></i> Tổng quan
             </a>
             <a asp-controller="Admin" asp-action="Products" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Products" ? "active" : "")">
-                <i class="fas fa-box"></i> Products
+                <i class="fas fa-box"></i> Sản phẩm
             </a>
             <a asp-controller="Admin" asp-action="Categories" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Categories" ? "active" : "")">
-                <i class="fas fa-list"></i> Categories
+                <i class="fas fa-list"></i> Danh mục
             </a>
             <a asp-controller="Admin" asp-action="Orders" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Orders" ? "active" : "")">
-                <i class="fas fa-shopping-cart"></i> Orders
+                <i class="fas fa-shopping-cart"></i> Đơn hàng
             </a>
             <a asp-controller="Admin" asp-action="Customers" class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Customers" ? "active" : "")">
-                <i class="fas fa-users"></i> Customers
+                <i class="fas fa-users"></i> Khách hàng
             </a>
             <hr style="border-color: rgba(255,255,255,0.1);" />
             <a asp-controller="Home" asp-action="Index" class="nav-link" target="_blank">
-                <i class="fas fa-store"></i> View Store
+                <i class="fas fa-store"></i> Xem cửa hàng
             </a>
             <form asp-controller="Account" asp-action="Logout" method="post" style="margin: 0;">
                 <button type="submit" class="nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
-                    <i class="fas fa-sign-out-alt"></i> Logout
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
                 </button>
             </form>
         </nav>

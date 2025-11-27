@@ -1,7 +1,7 @@
 @model IndexViewModel
 @using System.Globalization
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Trang chủ";
 
     string FormatPrice(long value) => $"{value:N0} ₫";
 }
@@ -13,7 +13,7 @@
                 <img class="img-fluid" src="https://cdn.casio-vietnam.vn/wp-content/uploads/2024/09/z5834462921612_f6e895ab1e8c7cf42aa0e5f00b784b91.jpg" alt="Image">
                 <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                     <div class="p-3" style="max-width: 700px;">
-                        <a href="#" class="btn btn-light py-2 px-3">Shop Now</a>
+                        <a href="#" class="btn btn-light py-2 px-3">Mua ngay</a>
                     </div>
                 </div>
             </div>
@@ -21,8 +21,8 @@
                 <img class="img-fluid" src="https://cdn.casio-vietnam.vn/wp-content/uploads/2024/09/z5834465488940_8fa54646674993b94ea7590072b0450e.jpg" alt="Image">
                 <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                     <div class="p-3" style="max-width: 700px;">
-                        <h3 class="display-4 text-white font-weight-semi-bold mb-4">Reasonable Price</h3>
-                        <a href="#" class="btn btn-light py-2 px-3">Shop Now</a>
+                        <h3 class="display-4 text-white font-weight-semi-bold mb-4">Giá hợp lý</h3>
+                        <a href="#" class="btn btn-light py-2 px-3">Mua ngay</a>
                     </div>
                 </div>
             </div>
@@ -46,25 +46,25 @@
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
                 <h1 class="fa fa-check text-primary m-0 mr-3"></h1>
-                <h5 class="font-weight-semi-bold m-0">Quality Product</h5>
+                <h5 class="font-weight-semi-bold m-0">Sản phẩm chất lượng</h5>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
                 <h1 class="fa fa-shipping-fast text-primary m-0 mr-2"></h1>
-                <h5 class="font-weight-semi-bold m-0">Free Shipping</h5>
+                <h5 class="font-weight-semi-bold m-0">Miễn phí vận chuyển</h5>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
                 <h1 class="fas fa-exchange-alt text-primary m-0 mr-3"></h1>
-                <h5 class="font-weight-semi-bold m-0">14-Day Return</h5>
+                <h5 class="font-weight-semi-bold m-0">Đổi trả trong 14 ngày</h5>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 col-sm-12 pb-1">
             <div class="d-flex align-items-center border mb-4" style="padding: 30px;">
                 <h1 class="fa fa-phone-volume text-primary m-0 mr-3"></h1>
-                <h5 class="font-weight-semi-bold m-0">24/7 Support</h5>
+                <h5 class="font-weight-semi-bold m-0">Hỗ trợ 24/7</h5>
             </div>
         </div>
     </div>
@@ -76,8 +76,8 @@
     <div class="row px-xl-5 pb-3">
         @if (Model.Categories.Count == 0)
         {
-            <div class="col-12 text-center">
-                <p class="text-muted mb-0">No categories available just yet.</p>
+                <div class="col-12 text-center">
+                <p class="text-muted mb-0">Chưa có danh mục nào.</p>
             </div>
         }
         else
@@ -86,7 +86,7 @@
             {
                 <div class="col-lg-4 col-md-6 pb-1">
                     <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
-                        <p class="text-right">@category.ProductCount Models</p>
+                        <p class="text-right">@category.ProductCount sản phẩm</p>
                         <a asp-controller="Store" asp-action="Shop" class="cat-img position-relative overflow-hidden mb-3">
                             <img class="img-fluid" src="@Url.Content(category.ImageUrl ?? "~/template/img/cat-1.jpg")"
                                 alt="@category.Name">
@@ -103,13 +103,13 @@
 <!-- Products Start -->
 <div class="container-fluid pt-5">
     <div class="text-center mb-4">
-        <h2 class="section-title px-5"><span class="px-2">Trending Timepieces</span></h2>
+        <h2 class="section-title px-5"><span class="px-2">Đồng hồ nổi bật</span></h2>
     </div>
     <div class="row px-xl-5 pb-3">
         @if (Model.TrendingProducts.Count == 0)
         {
             <div class="col-12 text-center">
-                <p class="text-muted mb-0">No trending watches yet. Check back soon.</p>
+                <p class="text-muted mb-0">Chưa có sản phẩm nổi bật. Vui lòng quay lại sau.</p>
             </div>
         }
         else
@@ -146,9 +146,9 @@
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
                             <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId"
-                                class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Quick View</a>
+                                class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem</a>
                             <a asp-controller="Home" asp-action="Cart" class="btn btn-sm text-dark p-0"><i
-                                    class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                                    class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ</a>
                         </div>
                     </div>
                 </div>
@@ -162,13 +162,13 @@
 <!-- Products Start -->
 <div class="container-fluid pt-5">
     <div class="text-center mb-4">
-        <h2 class="section-title px-5"><span class="px-2">New Arrivals</span></h2>
+        <h2 class="section-title px-5"><span class="px-2">Hàng mới về</span></h2>
     </div>
     <div class="row px-xl-5 pb-3">
         @if (Model.NewArrivals.Count == 0)
         {
             <div class="col-12 text-center">
-                <p class="text-muted mb-0">No new arrivals yet. Check back soon.</p>
+                <p class="text-muted mb-0">Chưa có hàng mới. Vui lòng quay lại sau.</p>
             </div>
         }
         else
@@ -205,9 +205,9 @@
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
                             <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId"
-                                class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Quick View</a>
+                                class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem</a>
                             <a asp-controller="Store" asp-action="Cart" class="btn btn-sm text-dark p-0"><i
-                                    class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</a>
+                                    class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ</a>
                         </div>
                     </div>
                 </div>

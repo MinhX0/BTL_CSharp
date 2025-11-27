@@ -1,22 +1,22 @@
 @model backend.ViewModels.Admin.CategoryFormViewModel
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Create Category";
+    ViewData["Title"] = "Tạo danh mục";
 }
 <div class="admin-card">
-    <h3>Create Category</h3>
+    <h3>Tạo danh mục</h3>
     <form asp-controller="Admin" asp-action="CreateCategory" method="post">
         <div class="form-group">
-            <label for="Name">Name</label>
+            <label for="Name">Tên</label>
             <input asp-for="Name" class="form-control" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label for="ImageUrl">Image URL</label>
+            <label for="ImageUrl">URL ảnh</label>
             <input asp-for="ImageUrl" class="form-control" />
         </div>
-        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
-        <a asp-controller="Admin" asp-action="Categories" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+        <a asp-controller="Admin" asp-action="Categories" class="btn btn-secondary">Hủy</a>
     </form>
 </div>
 @section Scripts {

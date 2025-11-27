@@ -3,11 +3,11 @@
     <div class="row bg-secondary py-2 px-xl-5">
         <div class="col-lg-6 d-none d-lg-block">
             <div class="d-inline-flex align-items-center">
-                <a class="text-dark" href="#">FAQs</a>
+                <a class="text-dark" href="#">Câu hỏi thường gặp</a>
                 <span class="text-muted px-2">|</span>
-                <a class="text-dark" href="#">Help</a>
+                <a class="text-dark" href="#">Trợ giúp</a>
                 <span class="text-muted px-2">|</span>
-                <a class="text-dark" href="#">Support</a>
+                <a class="text-dark" href="#">Hỗ trợ</a>
             </div>
         </div>
         <div class="col-lg-6 text-center text-lg-right">
@@ -30,7 +30,7 @@
         <div class="col-lg-6 col-6 text-left">
             <form asp-controller="Store" asp-action="Shop" method="get" class="w-100">
                 <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search for products..." value="@Context.Request.Query["search"]" />
+                    <input type="text" name="search" class="form-control" placeholder="Tìm sản phẩm..." value="@Context.Request.Query["search"]" />
                     <div class="input-group-append">
                         <button class="input-group-text bg-transparent text-primary" type="submit" style="border:none;background:none;cursor:pointer;">
                             <i class="fa fa-search"></i>
@@ -51,9 +51,9 @@
 <div class="container-fluid mb-5">
     <div class="row border-top px-xl-5">
         <div class="col-lg-3 d-none d-lg-block" style="position: relative;">
-            <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100"
+                <a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100"
                 data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
-                <h6 class="m-0">Categories</h6>
+                <h6 class="m-0">Danh mục</h6>
                 <i class="fa fa-angle-down text-dark"></i>
             </a>
             <nav class="collapse navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0"
@@ -73,25 +73,25 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav mr-auto py-0">
-                        <a asp-controller="Home" asp-action="Index" class="nav-item nav-link">Home</a>
-                        <a asp-controller="Store" asp-action="Shop" class="nav-item nav-link">Shop</a>
-                        <a asp-controller="Store" asp-action="Contact" class="nav-item nav-link">Contact</a>
+                        <a asp-controller="Home" asp-action="Index" class="nav-item nav-link">Trang chủ</a>
+                        <a asp-controller="Store" asp-action="Shop" class="nav-item nav-link">Cửa hàng</a>
+                        <a asp-controller="Store" asp-action="Contact" class="nav-item nav-link">Liên hệ</a>
                     </div>
                     <div class="navbar-nav ml-auto py-0">
                         @if (User?.Identity?.IsAuthenticated == true || Context?.Session?.GetString("IsSignedIn") == "1")
                         {
                             var name = User?.Identity?.Name ?? Context.Session.GetString("Username");
-                            <span class="nav-item nav-link">Hello, @name</span>
-                            <a asp-controller="Account" asp-action="MyAccount" class="nav-item nav-link">My Account</a>
+                            <span class="nav-item nav-link">Xin chào, @name</span>
+                            <a asp-controller="Account" asp-action="MyAccount" class="nav-item nav-link">Tài khoản</a>
                             <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-link nav-link text-left">Logout</button>
+                                <button type="submit" class="btn btn-link nav-link text-left">Đăng xuất</button>
                             </form>
                         }
                         else
                         {
-                            <a asp-controller="Account" asp-action="Login" class="nav-item nav-link">Login</a>
-                            <a asp-controller="Account" asp-action="Register" class="nav-item nav-link">Register</a>
+                            <a asp-controller="Account" asp-action="Login" class="nav-item nav-link">Đăng nhập</a>
+                            <a asp-controller="Account" asp-action="Register" class="nav-item nav-link">Đăng ký</a>
                         }
                     </div>
                 </div>

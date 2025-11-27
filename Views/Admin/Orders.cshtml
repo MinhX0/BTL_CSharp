@@ -1,21 +1,21 @@
 @model backend.ViewModels.Admin.OrderListViewModel
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Orders";
+    ViewData["Title"] = "Đơn hàng";
     string FormatCurrency(decimal v) => v.ToString("N0");
 }
 <div class="admin-card">
-    <h3>Orders</h3>
+    <h3>Đơn hàng</h3>
     <div class="search-box">
         <form method="get" style="width:100%; display:flex; gap:10px;">
             <select name="status" class="form-control" style="max-width:200px;">
-                <option value="">All Statuses</option>
-                <option value="Pending" selected="@(Model.StatusFilter == "Pending")">Pending</option>
-                <option value="Shipped" selected="@(Model.StatusFilter == "Shipped")">Shipped</option>
-                <option value="Completed" selected="@(Model.StatusFilter == "Completed")">Completed</option>
-                <option value="Cancelled" selected="@(Model.StatusFilter == "Cancelled")">Cancelled</option>
+                <option value="">Tất cả trạng thái</option>
+                <option value="Pending" selected="@(Model.StatusFilter == "Pending")">Chờ xử lý</option>
+                <option value="Shipped" selected="@(Model.StatusFilter == "Shipped")">Đã gửi</option>
+                <option value="Completed" selected="@(Model.StatusFilter == "Completed")">Hoàn tất</option>
+                <option value="Cancelled" selected="@(Model.StatusFilter == "Cancelled")">Đã hủy</option>
             </select>
-            <button type="submit"><i class="fas fa-filter"></i> Filter</button>
+            <button type="submit"><i class="fas fa-filter"></i> Lọc</button>
         </form>
     </div>
     <div class="admin-table">
@@ -23,11 +23,11 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Customer</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Total</th>
-                    <th>Items</th>
+                    <th>Khách hàng</th>
+                    <th>Ngày</th>
+                    <th>Trạng thái</th>
+                    <th>Tổng</th>
+                    <th>Số lượng</th>
                     <th></th>
                 </tr>
             </thead>

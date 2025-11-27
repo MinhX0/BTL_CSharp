@@ -1,13 +1,13 @@
 @model backend.ViewModels.Account.LoginViewModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Đăng nhập";
 }
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header bg-primary text-white">Login</div>
+                <div class="card-header bg-primary text-white">Đăng nhập</div>
                 <div class="card-body">
                     <form asp-action="Login" method="post">
                         <div asp-validation-summary="All" class="text-danger"></div>
@@ -27,13 +27,13 @@
                         <input type="hidden" asp-for="ReturnUrl" />
 
                         <div class="form-group d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary">Sign In</button>
-                            <a asp-controller="Store" asp-action="Index" class="text-muted">Continue shopping</a>
+                            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                            <a asp-controller="Store" asp-action="Index" class="text-muted">Tiếp tục mua sắm</a>
                         </div>
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <small>Don't have an account? <a asp-controller="Account" asp-action="Register">Register</a></small>
+                    <small>Chưa có tài khoản? <a asp-controller="Account" asp-action="Register">Đăng ký</a></small>
                 </div>
             </div>
         </div>

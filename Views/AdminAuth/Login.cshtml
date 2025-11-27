@@ -1,10 +1,10 @@
 @model backend.ViewModels.Admin.AdminLoginViewModel
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Admin Login";
+    ViewData["Title"] = "Đăng nhập Admin";
 }
 <div class="admin-card" style="max-width:480px; margin:60px auto;">
-    <h3><i class="fas fa-user-shield"></i> Admin Login</h3>
+    <h3><i class="fas fa-user-shield"></i> Đăng nhập Admin</h3>
     <form asp-action="Login" method="post">
         <div class="form-group">
             <label asp-for="Username"></label>
@@ -20,8 +20,8 @@
         {
             <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
         }
-        <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Login</button>
-        <p class="mt-3 text-muted" style="font-size:12px;">This page is for administrators only.</p>
+        <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Đăng nhập</button>
+        <p class="mt-3 text-muted" style="font-size:12px;">Trang này chỉ dành cho quản trị viên.</p>
     </form>
 </div>
 @section Scripts {

@@ -6,6 +6,8 @@ using backend.Services.Store;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,9 +61,12 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartService, CartService>();
 
-// Add services to the container.
+// Add localization services + MVC
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddControllers();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -116,6 +121,16 @@ if (!string.IsNullOrWhiteSpace(categoryImagesPath) && Directory.Exists(categoryI
 app.UseAuthentication();
 app.UseSession();
 app.UseAuthorization();
+
+// Configure request localization (default to Vietnamese)
+var supportedCultures = new[] { new CultureInfo("vi-VN"), new CultureInfo("en-US") };
+var requestLocalizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("vi-VN"),
+    SupportedCultures = supportedCultures.ToList(),
+    SupportedUICultures = supportedCultures.ToList()
+};
+app.UseRequestLocalization(requestLocalizationOptions);
 
 // Configure error pages and status code handling
 app.UseStatusCodePagesWithReExecute("/Error/{0}");

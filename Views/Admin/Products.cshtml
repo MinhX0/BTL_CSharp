@@ -1,16 +1,16 @@
 @model backend.ViewModels.Admin.ProductListViewModel
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Sản phẩm";
     string FormatPrice(long value) => value.ToString("N0");
 }
 <div class="admin-card">
-    <h3>Products</h3>
+    <h3>Sản phẩm</h3>
     <div class="search-box">
         <form method="get" class="form-inline" style="width:100%;">
-            <input type="text" name="search" value="@Model.SearchTerm" placeholder="Search products..." />
-            <button type="submit"><i class="fas fa-search"></i> Search</button>
-            <a asp-controller="Admin" asp-action="CreateProduct" class="btn btn-sm btn-primary ml-2"><i class="fas fa-plus"></i> New Product</a>
+            <input type="text" name="search" value="@Model.SearchTerm" placeholder="Tìm sản phẩm..." />
+            <button type="submit"><i class="fas fa-search"></i> Tìm</button>
+            <a asp-controller="Admin" asp-action="CreateProduct" class="btn btn-sm btn-primary ml-2"><i class="fas fa-plus"></i> Tạo sản phẩm</a>
         </form>
     </div>
     <div class="admin-table">
@@ -18,10 +18,10 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Stock</th>
+                    <th>Tên</th>
+                    <th>Danh mục</th>
+                    <th>Giá</th>
+                    <th>Tồn kho</th>
                     <th></th>
                 </tr>
             </thead>
@@ -36,7 +36,7 @@
                     <td>@p.Stock</td>
                     <td>
                         <a asp-controller="Admin" asp-action="EditProduct" asp-route-id="@p.ProductId" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
-                        <form asp-controller="Admin" asp-action="DeleteProduct" method="post" style="display:inline;" onsubmit="return confirm('Delete this product?');">
+                        <form asp-controller="Admin" asp-action="DeleteProduct" method="post" style="display:inline;" onsubmit="return confirm('Bạn có muốn xóa sản phẩm này?');">
                             <input type="hidden" name="id" value="@p.ProductId" />
                             <button type="submit" class="btn-action btn-delete"><i class="fas fa-trash"></i></button>
                         </form>

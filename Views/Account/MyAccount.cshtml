@@ -1,28 +1,28 @@
 @model backend.ViewModels.Account.MyAccountViewModel
 @{
-    ViewData["Title"] = "My Account";
+    ViewData["Title"] = "Tài khoản của tôi";
 }
 
 <div class="container pt-5 pb-5">
     <div class="row">
         <div class="col-md-3">
-            <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" id="dashboard-nav" data-toggle="pill" href="#dashboard-tab" role="tab">Dashboard</a>
-                <a class="nav-link" id="orders-nav" data-toggle="pill" href="#orders-tab" role="tab">Orders</a>
-                <a class="nav-link" id="payment-nav" data-toggle="pill" href="#payment-tab" role="tab">Payment Method</a>
-                <a class="nav-link" id="address-nav" data-toggle="pill" href="#address-tab" role="tab">Address</a>
-                <a class="nav-link" id="account-nav" data-toggle="pill" href="#account-tab" role="tab">Account Details</a>
+                <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="dashboard-nav" data-toggle="pill" href="#dashboard-tab" role="tab">Bảng điều khiển</a>
+                <a class="nav-link" id="orders-nav" data-toggle="pill" href="#orders-tab" role="tab">Đơn hàng</a>
+                <a class="nav-link" id="payment-nav" data-toggle="pill" href="#payment-tab" role="tab">Phương thức thanh toán</a>
+                <a class="nav-link" id="address-nav" data-toggle="pill" href="#address-tab" role="tab">Địa chỉ</a>
+                <a class="nav-link" id="account-nav" data-toggle="pill" href="#account-tab" role="tab">Thông tin tài khoản</a>
                 <form method="post" asp-action="Logout">
-                    <button type="submit" class="btn btn-link nav-link text-left">Logout</button>
+                    <button type="submit" class="btn btn-link nav-link text-left">Đăng xuất</button>
                 </form>
             </div>
         </div>
         <div class="col-md-9">
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="dashboard-tab" role="tabpanel" aria-labelledby="dashboard-nav">
-                    <h4>Dashboard</h4>
-                    <p>Welcome back, <strong>@Model.FullName</strong> (@Model.Username)</p>
-                    <p class="text-muted">From your account dashboard you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.</p>
+                    <h4>Bảng điều khiển</h4>
+                    <p>Chào mừng, <strong>@Model.FullName</strong> (@Model.Username)</p>
+                    <p class="text-muted">Tại đây bạn có thể xem đơn hàng gần nhất, quản lý địa chỉ giao hàng và thanh toán, và thay đổi mật khẩu cùng thông tin tài khoản.</p>
                 </div>
                 <div class="tab-pane fade" id="orders-tab" role="tabpanel" aria-labelledby="orders-nav">
                     <div class="table-responsive">
@@ -40,7 +40,7 @@
                             <tbody>
                                 <tr>
                                     <td>—</td>
-                                    <td>No orders yet</td>
+                                    <td>Chưa có đơn hàng</td>
                                     <td>—</td>
                                     <td>—</td>
                                     <td>—</td>
@@ -51,30 +51,30 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="payment-tab" role="tabpanel" aria-labelledby="payment-nav">
-                    <h4>Payment Method</h4>
-                    <p class="text-muted">No saved payment methods.</p>
+                    <h4>Phương thức thanh toán</h4>
+                    <p class="text-muted">Chưa lưu phương thức thanh toán nào.</p>
                 </div>
                 <div class="tab-pane fade" id="address-tab" role="tabpanel" aria-labelledby="address-nav">
-                    <h4>Address</h4>
+                    <h4>Địa chỉ</h4>
                     <div class="row">
                         <div class="col-md-6">
-                            <h5>Payment Address</h5>
+                            <h5>Địa chỉ thanh toán</h5>
                             <p>@Model.Address</p>
                             <p>Mobile: @Model.Phone</p>
                         </div>
                         <div class="col-md-6">
-                            <h5>Shipping Address</h5>
+                            <h5>Địa chỉ giao hàng</h5>
                             <p>@Model.Address</p>
                             <p>Mobile: @Model.Phone</p>
                         </div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="account-tab" role="tabpanel" aria-labelledby="account-nav">
-                    <h4>Account Details</h4>
+                    <h4>Thông tin tài khoản</h4>
                     <form method="post" asp-controller="Account" asp-action="UpdateAccount">
                         <div class="row">
                             <div class="col-md-6 form-group">
-                                <label>Full name</label>
+                                <label>Họ và tên</label>
                                 <input type="text" name="FullName" value="@Model.FullName" class="form-control" />
                             </div>
                             <div class="col-md-6 form-group">
@@ -82,36 +82,36 @@
                                 <input type="text" name="Email" value="@Model.Email" class="form-control" />
                             </div>
                             <div class="col-md-6 form-group">
-                                <label>Mobile</label>
+                                <label>Điện thoại</label>
                                 <input type="text" name="Phone" value="@Model.Phone" class="form-control" />
                             </div>
                             <div class="col-md-12 form-group">
-                                <label>Address</label>
+                                <label>Địa chỉ</label>
                                 <input type="text" name="Address" value="@Model.Address" class="form-control" />
                             </div>
                             <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary">Update Account</button>
+                                <button type="submit" class="btn btn-primary">Cập nhật</button>
                             </div>
                         </div>
                     </form>
 
-                    <h4 class="mt-4">Password change</h4>
+                    <h4 class="mt-4">Thay đổi mật khẩu</h4>
                     <form method="post" asp-controller="Account" asp-action="ChangePassword">
                         <div class="row">
                             <div class="col-md-12 form-group">
-                                <label>Current Password</label>
+                                <label>Mật khẩu hiện tại</label>
                                 <input type="password" name="CurrentPassword" class="form-control" />
                             </div>
                             <div class="col-md-6 form-group">
-                                <label>New Password</label>
+                                <label>Mật khẩu mới</label>
                                 <input type="password" name="NewPassword" class="form-control" />
                             </div>
                             <div class="col-md-6 form-group">
-                                <label>Confirm Password</label>
+                                <label>Xác nhận mật khẩu</label>
                                 <input type="password" name="ConfirmPassword" class="form-control" />
                             </div>
                             <div class="col-md-12">
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                             </div>
                         </div>
                     </form>

@@ -1,20 +1,20 @@
 @model ShopViewModel
 @using System.Globalization
 @{
-    ViewData["Title"] = "Shop";
-    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
+    ViewData["Title"] = "Cửa hàng";
+    string FormatPrice(decimal value) => string.Format(CultureInfo.CurrentCulture, "{0:C0}", value);
 }
 
 <div class="container-fluid pt-5">
     <div class="text-center mb-4">
-        <h2 class="section-title px-5"><span class="px-2">All Products</span></h2>
+        <h2 class="section-title px-5"><span class="px-2">Tất cả sản phẩm</span></h2>
     </div>
     <div class="row mb-3">
         <div class="col-md-8 mx-auto">
             <form asp-controller="Store" asp-action="Shop" method="get" class="form-inline justify-content-center">
                 <input type="hidden" name="categoryId" value="@Model.CategoryId" />
-                <input type="text" name="search" value="@Model.SearchTerm" class="form-control mr-2" placeholder="Search products..." />
-                <button type="submit" class="btn btn-primary">Search</button>
+                <input type="text" name="search" value="@Model.SearchTerm" class="form-control mr-2" placeholder="Tìm sản phẩm..." />
+                <button type="submit" class="btn btn-primary">Tìm</button>
             </form>
         </div>
     </div>
@@ -22,7 +22,7 @@
         @if (Model.Products == null || Model.Products.Count == 0)
         {
             <div class="col-12 text-center">
-                <p class="text-muted mb-0">No products found.</p>
+                <p class="text-muted mb-0">Không tìm thấy sản phẩm.</p>
             </div>
         }
         else
@@ -53,12 +53,12 @@
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between bg-light border">
-                            <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Quick View</a>
+                            <a asp-controller="Store" asp-action="Detail" asp-route-id="@product.ProductId" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Xem</a>
                             <form asp-controller="Store" asp-action="AddToCart" method="post" class="m-0 p-0 add-to-cart-form" data-product-id="@product.ProductId">
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="productId" value="@product.ProductId" />
                                 <input type="hidden" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-sm text-dark p-0 add-to-cart-btn"><i class="fas fa-shopping-cart text-primary mr-1"></i>Add To Cart</button>
+                                <button type="submit" class="btn btn-sm text-dark p-0 add-to-cart-btn"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm vào giỏ</button>
                             </form>
                         </div>
                     </div>
@@ -78,21 +78,21 @@
                 data: formData,
                 headers: { 'RequestVerificationToken': $form.find('input[name="__RequestVerificationToken"]').val() },
                 success: function() {
-                    showToast('Added to cart!');
+                    showToast('Đã thêm vào giỏ hàng!');
                 },
                 error: function(xhr) {
                     if (xhr.status === 401) {
                         window.location = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     } else {
-                        showToast('Could not add to cart.', true);
+                        showToast('Không thể thêm vào giỏ.', true);
                     }
                 }
             });
         });
         function showToast(msg, isError) {
             var $toast = $('<div class="toast position-fixed" style="top:20px;right:20px;z-index:9999;min-width:200px;">'
-                + '<div class="toast-header ' + (isError ? 'bg-danger' : 'bg-success') + ' text-white">'
-                + '<strong class="mr-auto">Cart</strong>'
+                    + '<div class="toast-header ' + (isError ? 'bg-danger' : 'bg-success') + ' text-white">'
+                    + '<strong class="mr-auto">Giỏ hàng</strong>'
                 + '<button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">&times;</button>'
                 + '</div>'
                 + '<div class="toast-body">' + msg + '</div>'

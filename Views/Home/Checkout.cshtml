@@ -1,7 +1,7 @@
 @using System.Globalization
 @using System.Linq
 @{
-    ViewData["Title"] = "Checkout";
+    ViewData["Title"] = "Thanh toán";
 
     var orderItems = new[]
     {
@@ -14,17 +14,17 @@
     const decimal orderShipping = 12m;
     decimal orderTotal = orderSubtotal + orderShipping;
 
-    string FormatPrice(decimal value) => string.Format(CultureInfo.GetCultureInfo("en-US"), "{0:C0}", value);
+    string FormatPrice(decimal value) => string.Format(CultureInfo.CurrentCulture, "{0:C0}", value);
 }
 
 <!-- Page Header Start -->
 <div class="container-fluid bg-secondary mb-5">
     <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-        <h1 class="font-weight-semi-bold text-uppercase mb-3">Checkout</h1>
+        <h1 class="font-weight-semi-bold text-uppercase mb-3">Thanh toán</h1>
             <div class="d-inline-flex">
-            <p class="m-0"><a asp-controller="Home" asp-action="Index">Home</a></p>
+            <p class="m-0"><a asp-controller="Home" asp-action="Index">Trang chủ</a></p>
             <p class="m-0 px-2">-</p>
-            <p class="m-0">Checkout</p>
+            <p class="m-0">Thanh toán</p>
         </div>
     </div>
 </div>
@@ -35,114 +35,114 @@
     <div class="row px-xl-5">
         <div class="col-lg-8">
             <div class="mb-4">
-                <h4 class="font-weight-semi-bold mb-4">Billing Address</h4>
+                <h4 class="font-weight-semi-bold mb-4">Địa chỉ thanh toán</h4>
                 <div class="row">
                     <div class="col-md-6 form-group">
-                        <label>First Name</label>
-                        <input class="form-control" type="text" placeholder="John">
+                        <label>Tên</label>
+                        <input class="form-control" type="text" placeholder="Nguyễn">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Last Name</label>
-                        <input class="form-control" type="text" placeholder="Doe">
+                        <label>Họ</label>
+                        <input class="form-control" type="text" placeholder="Văn">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>E-mail</label>
+                        <label>Email</label>
                         <input class="form-control" type="text" placeholder="example@email.com">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Mobile No</label>
-                        <input class="form-control" type="text" placeholder="+123 456 789">
+                        <label>Số điện thoại</label>
+                        <input class="form-control" type="text" placeholder="+84 912 345 678">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Address Line 1</label>
-                        <input class="form-control" type="text" placeholder="123 Street">
+                        <label>Địa chỉ 1</label>
+                        <input class="form-control" type="text" placeholder="Số nhà, tên đường">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Address Line 2</label>
-                        <input class="form-control" type="text" placeholder="123 Street">
+                        <label>Địa chỉ 2</label>
+                        <input class="form-control" type="text" placeholder="Tầng, khu phố (nếu có)">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Country</label>
+                        <label>Quốc gia</label>
                         <select class="custom-select">
-                            <option selected>United States</option>
+                            <option selected>Viet Nam</option>
                             <option>Afghanistan</option>
                             <option>Albania</option>
                             <option>Algeria</option>
                         </select>
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>City</label>
-                        <input class="form-control" type="text" placeholder="New York">
+                        <label>Thành phố</label>
+                        <input class="form-control" type="text" placeholder="Hà Nội">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>State</label>
-                        <input class="form-control" type="text" placeholder="New York">
+                        <label>Tỉnh/Thành</label>
+                        <input class="form-control" type="text" placeholder="Hà Nội">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>ZIP Code</label>
-                        <input class="form-control" type="text" placeholder="123">
+                        <label>Mã bưu chính</label>
+                        <input class="form-control" type="text" placeholder="100000">
                     </div>
                     <div class="col-md-12 form-group">
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" id="newaccount">
-                            <label class="custom-control-label" for="newaccount">Create an account</label>
+                            <label class="custom-control-label" for="newaccount">Tạo tài khoản</label>
                         </div>
                     </div>
                     <div class="col-md-12 form-group">
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" id="shipto">
-                            <label class="custom-control-label" for="shipto" data-toggle="collapse" data-target="#shipping-address">Ship to different address</label>
+                            <label class="custom-control-label" for="shipto" data-toggle="collapse" data-target="#shipping-address">Giao đến địa chỉ khác</label>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="collapse mb-4" id="shipping-address">
-                <h4 class="font-weight-semi-bold mb-4">Shipping Address</h4>
+                <h4 class="font-weight-semi-bold mb-4">Địa chỉ giao hàng</h4>
                 <div class="row">
                     <div class="col-md-6 form-group">
-                        <label>First Name</label>
-                        <input class="form-control" type="text" placeholder="John">
+                        <label>Họ</label>
+                        <input class="form-control" type="text" placeholder="Nguyễn">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Last Name</label>
-                        <input class="form-control" type="text" placeholder="Doe">
+                        <label>Tên</label>
+                        <input class="form-control" type="text" placeholder="Văn">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>E-mail</label>
+                        <label>Email</label>
                         <input class="form-control" type="text" placeholder="example@email.com">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Mobile No</label>
-                        <input class="form-control" type="text" placeholder="+123 456 789">
+                        <label>Số điện thoại</label>
+                        <input class="form-control" type="text" placeholder="+84 912 345 678">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Address Line 1</label>
-                        <input class="form-control" type="text" placeholder="123 Street">
+                        <label>Địa chỉ 1</label>
+                        <input class="form-control" type="text" placeholder="Số nhà, tên đường">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Address Line 2</label>
-                        <input class="form-control" type="text" placeholder="123 Street">
+                        <label>Địa chỉ 2</label>
+                        <input class="form-control" type="text" placeholder="Tầng, khu phố (nếu có)">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>Country</label>
+                        <label>Quốc gia</label>
                         <select class="custom-select">
-                            <option selected>United States</option>
+                            <option selected>Viet Nam</option>
                             <option>Afghanistan</option>
                             <option>Albania</option>
                             <option>Algeria</option>
                         </select>
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>City</label>
-                        <input class="form-control" type="text" placeholder="New York">
+                        <label>Thành phố</label>
+                        <input class="form-control" type="text" placeholder="Hà Nội">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>State</label>
-                        <input class="form-control" type="text" placeholder="New York">
+                        <label>Tỉnh/Thành</label>
+                        <input class="form-control" type="text" placeholder="Hà Nội">
                     </div>
                     <div class="col-md-6 form-group">
-                        <label>ZIP Code</label>
-                        <input class="form-control" type="text" placeholder="123">
+                        <label>Mã bưu chính</label>
+                        <input class="form-control" type="text" placeholder="100000">
                     </div>
                 </div>
             </div>
@@ -150,10 +150,10 @@
         <div class="col-lg-4">
             <div class="card border-secondary mb-5">
                 <div class="card-header bg-secondary border-0">
-                    <h4 class="font-weight-semi-bold m-0">Order Total</h4>
+                    <h4 class="font-weight-semi-bold m-0">Tổng đơn hàng</h4>
                 </div>
                 <div class="card-body">
-                    <h5 class="font-weight-medium mb-3">Products</h5>
+                    <h5 class="font-weight-medium mb-3">Sản phẩm</h5>
                     @foreach (var item in orderItems)
                     {
                         <div class="d-flex justify-content-between">
@@ -163,24 +163,24 @@
                     }
                     <hr class="mt-0">
                     <div class="d-flex justify-content-between mb-3 pt-1">
-                        <h6 class="font-weight-medium">Subtotal</h6>
+                        <h6 class="font-weight-medium">Tạm tính</h6>
                         <h6 class="font-weight-medium">@FormatPrice(orderSubtotal)</h6>
                     </div>
                     <div class="d-flex justify-content-between">
-                        <h6 class="font-weight-medium">Shipping</h6>
+                        <h6 class="font-weight-medium">Phí vận chuyển</h6>
                         <h6 class="font-weight-medium">@FormatPrice(orderShipping)</h6>
                     </div>
                 </div>
                 <div class="card-footer border-secondary bg-transparent">
                     <div class="d-flex justify-content-between mt-2">
-                        <h5 class="font-weight-bold">Total</h5>
+                        <h5 class="font-weight-bold">Tổng cộng</h5>
                         <h5 class="font-weight-bold">@FormatPrice(orderTotal)</h5>
                     </div>
                 </div>
             </div>
             <div class="card border-secondary mb-5">
                 <div class="card-header bg-secondary border-0">
-                    <h4 class="font-weight-semi-bold m-0">Payment</h4>
+                    <h4 class="font-weight-semi-bold m-0">Thanh toán</h4>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
@@ -198,12 +198,12 @@
                     <div class="">
                         <div class="custom-control custom-radio">
                             <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
-                            <label class="custom-control-label" for="banktransfer">Bank Wire</label>
+                            <label class="custom-control-label" for="banktransfer">Chuyển khoản ngân hàng</label>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer border-secondary bg-transparent">
-                    <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="button">Place Order</button>
+                    <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3" type="button">Đặt hàng</button>
                 </div>
             </div>
         </div>

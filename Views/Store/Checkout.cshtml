@@ -1,16 +1,16 @@
 @model backend.ViewModels.Store.CheckoutViewModel
 @{
-    ViewData["Title"] = "Checkout";
+    ViewData["Title"] = "Thanh toán";
 }
 <div class="container pt-5">
-    <h2 class="mb-4">Checkout</h2>
+    <h2 class="mb-4">Thanh toán</h2>
     @if (TempData["Success"] != null) {<div class="alert alert-success">@TempData["Success"]</div>}
     @if (TempData["Info"] != null) {<div class="alert alert-info">@TempData["Info"]</div>}
     @if (TempData["Error"] != null) {<div class="alert alert-danger">@TempData["Error"]</div>}
-    @if (Model.Items == null || !Model.Items.Any())
+    if (Model.Items == null || !Model.Items.Any())
     {
-        <p class="text-muted">Your cart is empty.</p>
-        <a asp-controller="Store" asp-action="Shop" class="btn btn-primary">Continue Shopping</a>
+        <p class="text-muted">Giỏ hàng của bạn đang trống.</p>
+        <a asp-controller="Store" asp-action="Shop" class="btn btn-primary">Tiếp tục mua sắm</a>
     }
     else
     {
@@ -18,22 +18,22 @@
             @Html.AntiForgeryToken()
             <div class="row">
                 <div class="col-md-7">
-                    <h4>Shipping Information</h4>
+                    <h4>Thông tin giao hàng</h4>
                     <div class="form-group">
-                        <label for="ShippingAddress">Shipping Address</label>
+                        <label for="ShippingAddress">Địa chỉ giao hàng</label>
                         <input asp-for="ShippingAddress" class="form-control" required />
                         <span asp-validation-for="ShippingAddress" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="PaymentMethod">Payment Method</label>
+                        <label for="PaymentMethod">Phương thức thanh toán</label>
                         <select asp-for="PaymentMethod" class="form-control">
-                            <option value="CashOnDelivery">Cash on Delivery</option>
-                            <option value="CreditCard">Credit Card</option>
+                            <option value="CashOnDelivery">Thanh toán khi nhận hàng (COD)</option>
+                            <option value="CreditCard">Thẻ tín dụng</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-5">
-                    <h4>Order Summary</h4>
+                    <h4>Tóm tắt đơn hàng</h4>
                     <ul class="list-group mb-3">
                         @foreach (var item in Model.Items)
                         {
@@ -42,15 +42,15 @@
                                     <h6 class="my-0">@item.Name</h6>
                                     <small class="text-muted">x @item.Quantity</small>
                                 </div>
-                                <span class="text-muted">@String.Format(System.Globalization.CultureInfo.GetCultureInfo("en-US"), "{0:C0}", item.LineTotal)</span>
+                                <span class="text-muted">@String.Format(System.Globalization.CultureInfo.CurrentCulture, "{0:C0}", item.LineTotal)</span>
                             </li>
                         }
                         <li class="list-group-item d-flex justify-content-between">
-                            <span>Total</span>
-                            <strong>@String.Format(System.Globalization.CultureInfo.GetCultureInfo("en-US"), "{0:C0}", Model.Total)</strong>
+                            <span>Tổng cộng</span>
+                            <strong>@String.Format(System.Globalization.CultureInfo.CurrentCulture, "{0:C0}", Model.Total)</strong>
                         </li>
                     </ul>
-                    <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+                    <button type="submit" class="btn btn-primary btn-block">Đặt hàng</button>
                 </div>
             </div>
         </form>
