@@ -25,30 +25,64 @@
                     <p class="text-muted">Tại đây bạn có thể xem đơn hàng gần nhất, quản lý địa chỉ giao hàng và thanh toán, và thay đổi mật khẩu cùng thông tin tài khoản.</p>
                 </div>
                 <div class="tab-pane fade" id="orders-tab" role="tabpanel" aria-labelledby="orders-nav">
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>No</th>
-                                    <th>Product</th>
-                                    <th>Date</th>
-                                    <th>Price</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>—</td>
-                                    <td>Chưa có đơn hàng</td>
-                                    <td>—</td>
-                                    <td>—</td>
-                                    <td>—</td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <h4>Đơn hàng của bạn</h4>
+                    @if (Model.Orders == null || !Model.Orders.Any())
+                    {
+                        <p class="text-muted">Bạn chưa có đơn hàng nào.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Số sản phẩm</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model.Orders)
+                                    {
+                                        <tr>
+                                            <td>#@order.OrderId</td>
+                                            <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>@order.ItemCount sản phẩm</td>
+                                            <td>@order.TotalAmount.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ₫</td>
+                                            <td>
+                                                @if (order.Status == "Pending")
+                                                {
+                                                    <span class="badge badge-warning">Đang xử lý</span>
+                                                }
+                                                else if (order.Status == "Processing")
+                                                {
+                                                    <span class="badge badge-info">Đang giao</span>
+                                                }
+                                                else if (order.Status == "Completed")
+                                                {
+                                                    <span class="badge badge-success">Hoàn thành</span>
+                                                }
+                                                else if (order.Status == "Cancelled")
+                                                {
+                                                    <span class="badge badge-danger">Đã hủy</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-secondary">@order.Status</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a href="#" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
                 </div>
                 <div class="tab-pane fade" id="payment-tab" role="tabpanel" aria-labelledby="payment-nav">
                     <h4>Phương thức thanh toán</h4>

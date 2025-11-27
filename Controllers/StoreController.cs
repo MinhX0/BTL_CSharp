@@ -194,15 +194,25 @@ namespace backend.Controllers
         [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Customer")]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
+            var isAjax = Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            
             var customerId = GetCurrentCustomerId();
             if (customerId == null)
             {
+                if (isAjax)
+                {
+                    return Unauthorized();
+                }
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Detail", new { id = productId }) });
             }
 
             var product = await _productService.GetProductWithDetailsAsync(productId);
             if (product == null || !product.IsActive)
             {
+                if (isAjax)
+                {
+                    return BadRequest(new { message = "Sản phẩm không khả dụng." });
+                }
                 TempData["Error"] = "Product not available.";
                 return RedirectToAction("Shop");
             }
@@ -217,6 +227,12 @@ namespace backend.Controllers
             }
 
             await _cartService.AddOrUpdateItemAsync(customerId.Value, productId, quantity);
+            
+            if (isAjax)
+            {
+                return Ok(new { message = "Đã thêm vào giỏ hàng!" });
+            }
+            
             TempData["Success"] = "Added to cart.";
             return RedirectToAction("Cart");
         }

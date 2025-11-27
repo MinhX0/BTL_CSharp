@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Tổng quan";
-    string FormatCurrency(decimal v) => v.ToString("N0");
+    string FormatCurrency(decimal v) => v.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) + " ₫";
 }
 <div class="stats-row">
     <div class="stat-card primary">

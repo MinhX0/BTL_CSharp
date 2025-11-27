@@ -11,11 +11,13 @@ namespace backend.Controllers
     {
         private readonly IAdminRepository _adminRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public AccountController(IAdminRepository adminRepository, ICustomerRepository customerRepository)
+        public AccountController(IAdminRepository adminRepository, ICustomerRepository customerRepository, IOrderRepository orderRepository)
         {
             _adminRepository = adminRepository;
             _customerRepository = customerRepository;
+            _orderRepository = orderRepository;
         }
 
         [HttpGet]
@@ -263,6 +265,8 @@ namespace backend.Controllers
                 return RedirectToAction("Login", new { returnUrl = Url.Action("MyAccount") });
             }
 
+            var orders = await _orderRepository.GetOrdersByCustomerAsync(customer.CustomerId);
+
             var vm = new MyAccountViewModel
             {
                 UserId = customer.CustomerId,
@@ -270,7 +274,17 @@ namespace backend.Controllers
                 FullName = customer.FullName,
                 Email = customer.Email,
                 Phone = customer.Phone ?? string.Empty,
-                Address = customer.Address ?? string.Empty
+                Address = customer.Address ?? string.Empty,
+                Orders = orders.Select(o => new OrderViewModel
+                {
+                    OrderId = o.OrderId,
+                    OrderDate = o.OrderDate,
+                    TotalAmount = o.TotalAmount,
+                    Status = o.Status,
+                    ItemCount = o.OrderDetails?.Count ?? 0,
+                    PaymentMethod = o.PaymentMethod,
+                    ShippingAddress = o.ShippingAddress
+                }).OrderByDescending(o => o.OrderDate).ToList()
             };
 
             return View(vm);

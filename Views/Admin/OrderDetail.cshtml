@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Đơn hàng #" + Model.OrderId;
-    string FormatCurrency(decimal v) => v.ToString("N0");
+    string FormatCurrency(decimal v) => v.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) + " ₫";
 }
 <div class="admin-card">
     <h3>Chi tiết đơn hàng</h3>

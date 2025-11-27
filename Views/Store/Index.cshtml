@@ -2,7 +2,7 @@
 @using System.Globalization
 @{
     ViewData["Title"] = "Cửa hàng";
-    string FormatPrice(decimal value) => string.Format(CultureInfo.CurrentCulture, "{0:C0}", value);
+    string FormatPrice(decimal value) => ((long)value).ToString("N0", new System.Globalization.CultureInfo("vi-VN")) + " ₫";
 }
 
 <!-- Featured Start -->
@@ -182,16 +182,24 @@
         $('.add-to-cart-form').on('submit', function(e) {
             e.preventDefault();
             var $form = $(this);
-            var formData = $form.serialize();
+            var $btn = $form.find('button[type="submit"]');
+            var originalHtml = $btn.html();
+            $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+            
             $.ajax({
                 url: $form.attr('action'),
                 type: 'POST',
-                data: formData,
-                headers: { 'RequestVerificationToken': $form.find('input[name="__RequestVerificationToken"]').val() },
+                data: $form.serialize(),
+                headers: {
+                    'RequestVerificationToken': $form.find('input[name="__RequestVerificationToken"]').val(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
                 success: function() {
                     showToast('Đã thêm vào giỏ hàng!');
+                    $btn.prop('disabled', false).html(originalHtml);
                 },
                 error: function(xhr) {
+                    $btn.prop('disabled', false).html(originalHtml);
                     if (xhr.status === 401) {
                         window.location = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
                     } else {
