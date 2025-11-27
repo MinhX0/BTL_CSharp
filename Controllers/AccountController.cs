@@ -289,5 +289,57 @@ namespace backend.Controllers
 
             return View(vm);
         }
+
+        [HttpGet]
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Customer")]
+        public async Task<IActionResult> OrderDetail(int id)
+        {
+            var customerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(customerIdClaim) || !int.TryParse(customerIdClaim, out var customerId))
+            {
+                return RedirectToAction("Login", new { returnUrl = Url.Action("OrderDetail", new { id }) });
+            }
+
+            var orders = await _orderRepository.GetOrdersByCustomerAsync(customerId);
+            var order = orders.FirstOrDefault(o => o.OrderId == id);
+
+            if (order == null)
+            {
+                TempData["Error"] = "Không tìm thấy đơn hàng.";
+                return RedirectToAction("MyAccount");
+            }
+
+            // Verify the order belongs to this customer
+            if (order.CustomerId != customerId)
+            {
+                TempData["Error"] = "Bạn không có quyền xem đơn hàng này.";
+                return RedirectToAction("MyAccount");
+            }
+
+            var customer = await _customerRepository.GetByIdAsync(customerId);
+
+            var vm = new OrderDetailViewModel
+            {
+                OrderId = order.OrderId,
+                OrderDate = order.OrderDate,
+                TotalAmount = order.TotalAmount,
+                Status = order.Status,
+                PaymentMethod = order.PaymentMethod,
+                ShippingAddress = order.ShippingAddress,
+                CustomerName = customer?.FullName ?? string.Empty,
+                CustomerEmail = customer?.Email ?? string.Empty,
+                CustomerPhone = customer?.Phone ?? string.Empty,
+                Items = order.OrderDetails?.Select(od => new OrderDetailItemViewModel
+                {
+                    ProductId = od.ProductId,
+                    ProductName = od.Product?.ProductName ?? "Unknown Product",
+                    ProductImage = od.Product?.Img,
+                    Quantity = od.Quantity,
+                    Price = od.Price
+                }).ToList() ?? new List<OrderDetailItemViewModel>()
+            };
+
+            return View(vm);
+        }
     }
 }
