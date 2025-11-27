@@ -11,7 +11,7 @@
 }
 
 body.admin {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Noto Sans', sans-serif;
     background-color: #f4f6f9;
 }
 
@@ -354,7 +354,7 @@ body.admin {
     border: 1px solid #dee2e6;
     border-radius: 4px;
     font-size: 14px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Noto Sans', sans-serif;
 }
 
 .form-group textarea {
