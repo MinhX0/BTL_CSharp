@@ -3,6 +3,7 @@ using backend.Persistance;
 using backend.Repositories.Store;
 using backend.Repositories.UserInfoRepositories;
 using backend.Services.Store;
+using backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -60,6 +61,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 // Add localization services + MVC
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");

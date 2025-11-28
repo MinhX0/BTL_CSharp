@@ -75,5 +75,18 @@ namespace backend.Services.Store
             _productRepository.Delete(existing);
             return true;
         }
+
+        public async Task<bool> AddStockAsync(int productId, int quantityToAdd)
+        {
+            if (quantityToAdd <= 0) return false;
+            var product = await _productRepository.GetByIdAsync(productId);
+            if (product is null) return false;
+            checked
+            {
+                product.StockQuantity += quantityToAdd;
+            }
+            _productRepository.Update(product);
+            return true;
+        }
     }
 }

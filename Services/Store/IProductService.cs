@@ -11,5 +11,6 @@ namespace backend.Services.Store
         Task<Product> CreateAsync(Product product);
         Task<bool> UpdateAsync(Product product);
         Task<bool> DeleteAsync(int id);
+        Task<bool> AddStockAsync(int productId, int quantityToAdd);
     }
 }

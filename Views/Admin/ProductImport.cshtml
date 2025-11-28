@@ -1,0 +1,39 @@
+@model backend.ViewModels.Admin.ProductImportViewModel
+@{
+    ViewData["Title"] = "Product Import";
+}
+<div class="container mt-4">
+    <h2>Product Import</h2>
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success">@Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger">@Model.Error</div>
+    }
+    <form asp-action="Import" method="post">
+        <div class="mb-3">
+            <label class="form-label">Product</label>
+            <select name="SelectedProductId" class="form-select" required>
+                <option value="">-- Select product --</option>
+                @foreach (var p in Model.Products)
+                {
+                    if (Model.SelectedProductId == p.ProductId)
+                    {
+                        <option value="@p.ProductId" selected>@p.ProductName</option>
+                    }
+                    else
+                    {
+                        <option value="@p.ProductId">@p.ProductName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Quantity to add</label>
+            <input type="number" name="QuantityToAdd" class="form-control" min="1" value="@Model.QuantityToAdd" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Add to stock</button>
+    </form>
+</div>
