@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers.Admin
 {
-    [Route("admin/report")] 
+    [Route("Admin/Report")] 
     public class ReportController : Controller
     {
         private readonly IReportService _reportService;
@@ -16,7 +16,7 @@ namespace backend.Controllers.Admin
             _reportService = reportService;
         }
 
-        [HttpGet("sales")]
+        [HttpGet("Sales")]
         public async Task<IActionResult> Sales([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] int? categoryId)
         {
             var filter = new ProductSalesReportFilter

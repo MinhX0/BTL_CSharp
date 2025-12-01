@@ -434,22 +434,22 @@ namespace backend.Controllers
                 }
             }
 
-            AddSpec("Brand", product.Brand);
-            AddSpec("Collection", product.Category?.CategoryName);
-            AddSpec("Gender", product.Gender);
-            AddSpec("Origin", product.Origin);
-            AddSpec("Movement", product.MovementType);
-            AddSpec("Material", product.Material);
+            AddSpec("Nhãn hiệu", product.Brand);
+            AddSpec("Loại", product.Category?.CategoryName);
+            AddSpec("Giới tính", product.Gender);
+            AddSpec("Nguồn gốc", product.Origin);
+            AddSpec("Vòng xoay", product.MovementType);
+            AddSpec("Chất liệu", product.Material);
 
             specifications.Add(new ProductSpecificationViewModel
             {
-                Label = "Stock",
+                Label = "Số lượng",
                 Value = product.StockQuantity.ToString()
             });
 
             specifications.Add(new ProductSpecificationViewModel
             {
-                Label = "Added",
+                Label = "Đã thêm ngày",
                 Value = product.CreatedDate.ToString("MMMM dd, yyyy")
             });
 

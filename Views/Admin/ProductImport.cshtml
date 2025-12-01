@@ -1,8 +1,10 @@
 @model backend.ViewModels.Admin.ProductImportViewModel
 @{
-    ViewData["Title"] = "Product Import";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    ViewData["Title"] = "Nhập hàng";
 }
-<div class="container mt-4">
+<div class="admin-card">
     <h2>Product Import</h2>
     @if (!string.IsNullOrEmpty(Model.Message))
     {
@@ -14,7 +16,7 @@
     }
     <form asp-action="Import" method="post">
         <div class="mb-3">
-            <label class="form-label">Product</label>
+            <label class="form-label">Sản phẩm</label>
             <select name="SelectedProductId" class="form-select" required>
                 <option value="">-- Select product --</option>
                 @foreach (var p in Model.Products)
@@ -31,9 +33,10 @@
             </select>
         </div>
         <div class="mb-3">
-            <label class="form-label">Quantity to add</label>
-            <input type="number" name="QuantityToAdd" class="form-control" min="1" value="@Model.QuantityToAdd" required />
+            <label class="form-label">Số lượng</label>
+            <input type="number" name="QuantityToAdd" class="form-control" min="1" value="@Model.QuantityToAdd"
+                required />
         </div>
-        <button type="submit" class="btn btn-primary">Add to stock</button>
+        <button type="submit" class="btn btn-primary">Hoàn thành</button>
     </form>
 </div>

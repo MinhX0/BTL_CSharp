@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers.Admin
 {
-    [Route("admin/products/import")]
+    [Route("Admin/Products/Import")]
     public class ProductImportController : Controller
     {
         private readonly IProductService _productService;
