@@ -9,19 +9,16 @@
     <h2>Báo cáo bán hàng</h2>
     <form method="get" class="row g-3 mb-3">
         <div class="col-auto">
-            <label class="form-label">Ngày đầu</label>
-            <input type="date" name="startDate" class="form-control"
-                value="@Model.Filter.StartDate?.ToString("dd-MM-yyyy")" />
+            <label class="form-label">Tháng</label>
+            <input type="number" name="month" min="1" max="12" class="form-control" value="@(Model.Filter.Month ?? DateTime.Now.Month)" />
         </div>
         <div class="col-auto">
-            <label class="form-label">Ngày cuối</label>
-            <input type="date" name="endDate" class="form-control"
-                value="@Model.Filter.EndDate?.ToString("dd-MM-yyyy")" />
+            <label class="form-label">Năm</label>
+            <input type="number" name="year" min="2000" max="2100" class="form-control" value="@(Model.Filter.Year ?? DateTime.Now.Year)" />
         </div>
         <div class="col-auto">
-            <label class="form-label">Mã loại</label>
-            <input type="number" name="categoryId" class="form-control"
-                value="@(Model.Filter.CategoryId?.ToString() ?? "")" />
+            <label class="form-label">Mã loại (tuỳ chọn)</label>
+            <input type="number" name="categoryId" class="form-control" value="@(Model.Filter.CategoryId?.ToString() ?? "")" />
         </div>
         <div class="col-auto align-self-end">
             <button type="submit" class="btn btn-primary">Lọc</button>
@@ -54,4 +51,86 @@
             </tr>
         </tfoot>
     </table>
+
+        <h3 class="mt-4">Doanh thu theo ngày (@(Model.Filter.Month ?? DateTime.Now.Month)/@(Model.Filter.Year ?? DateTime.Now.Year))</h3>
+        <div class="mb-3">
+            <canvas id="revenueChart" height="140"></canvas>
+        </div>
 </div>
+
+    @section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+        <script>
+            (function() {
+                const labels = [
+                    @for (int i = 0; i < Model.DailyPoints.Count; i++)
+                    {
+                        var d = Model.DailyPoints[i].Date.ToString("dd-MM");
+                        @:("@d")
+                        if (i < Model.DailyPoints.Count - 1) { @:,
+                        }
+                    }
+                ];
+                const revenues = [
+                    @for (int i = 0; i < Model.DailyPoints.Count; i++)
+                    {
+                        @: @Model.DailyPoints[i].TotalRevenue
+                        if (i < Model.DailyPoints.Count - 1) { @:,
+                        }
+                    }
+                ];
+
+                const ctx = document.getElementById('revenueChart');
+                if (!ctx) return;
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Revenue',
+                                data: revenues,
+                                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1,
+                                yAxisID: 'y'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Revenue' },
+                                ticks: {
+                                    callback: function(value) {
+                                        // simple currency formatting
+                                        return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(value);
+                                    }
+                                }
+                            },
+                            
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        const dsLabel = ctx.dataset.label || '';
+                                        const val = ctx.parsed.y;
+                                        if (dsLabel === 'Revenue') {
+                                            return dsLabel + ': ' + new Intl.NumberFormat(undefined, { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(val);
+                                        }
+                                        return dsLabel + ': ' + val;
+                                    }
+                                }
+                            },
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            })();
+        </script>
+    }

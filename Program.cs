@@ -71,6 +71,8 @@ builder.Services.AddControllersWithViews()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Outbound HTTP for geocoding proxy (Leaflet/Nominatim)
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -141,7 +143,7 @@ app.UseExceptionHandler("/Error/500");
 // Map MVC controller routes for Razor views
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Store}/{action=Index}/{id?}");
 
 // Keep API controllers
 app.MapControllers();

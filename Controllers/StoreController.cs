@@ -30,10 +30,43 @@ namespace backend.Controllers
             _customerRepository = customerRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            // Redirect homepage to the Home controller's Index action — the Store controller now focuses on shop actions only.
-            return RedirectToAction("Index", "Home");
+            var categories = await _categoryService.GetAllAsync();
+            var products = await _productService.GetAllAsync();
+
+            var categoryCards = categories.Select(c => new CategorySummaryViewModel
+            {
+                CategoryId = c.CategoryId,
+                Name = c.CategoryName,
+                ImageUrl = BuildCategoryImagePath(c),
+                ProductCount = products.Count(p => p.IsActive && p.CategoryId == c.CategoryId)
+            }).ToList();
+
+            var activeProducts = products.Where(p => p.IsActive).ToList();
+            var categoriesLookup = categories.ToDictionary(c => c.CategoryId, c => c.CategoryName);
+
+            var trending = activeProducts
+                .OrderBy(p => p.DiscountPrice ?? long.MaxValue)
+                .ThenByDescending(p => p.CreatedDate)
+                .Take(8)
+                .Select(p => ToProductCardViewModel(p, categoriesLookup))
+                .ToList();
+
+            var newArrivals = activeProducts
+                .OrderByDescending(p => p.CreatedDate)
+                .Take(8)
+                .Select(p => ToProductCardViewModel(p, categoriesLookup))
+                .ToList();
+
+            var vm = new IndexViewModel
+            {
+                Categories = categoryCards,
+                TrendingProducts = trending,
+                NewArrivals = newArrivals
+            };
+
+            return View(vm);
         }
 
         public async Task<IActionResult> Shop(int? categoryId, string? search)
@@ -322,7 +355,8 @@ namespace backend.Controllers
             await _orderService.CreateAsync(order, orderDetails);
             await _cartService.ClearCartAsync(customerId.Value);
             TempData["Success"] = $"Order #{order.OrderId} placed successfully.";
-            return RedirectToAction("Detail", "Store", new { id = orderDetails.First().ProductId }); // simple redirect; could go to order confirmation page
+            // Redirect to order detail/confirmation screen so customer sees items and status
+            return RedirectToAction("OrderDetail", "Account", new { id = order.OrderId });
         }
 
         private int? GetCurrentCustomerId()

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using System.IO;
 
 namespace backend.Controllers
 {
@@ -208,7 +209,7 @@ namespace backend.Controllers
                 return Redirect(model.ReturnUrl);
             }
 
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction("Index", "Store");
         }
 
         [HttpPost]
@@ -234,7 +235,7 @@ namespace backend.Controllers
             // Sign out cookie authentication
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction("Index", "Store");
         }
 
         [HttpGet]
@@ -300,8 +301,8 @@ namespace backend.Controllers
                 return RedirectToAction("Login", new { returnUrl = Url.Action("OrderDetail", new { id }) });
             }
 
-            var orders = await _orderRepository.GetOrdersByCustomerAsync(customerId);
-            var order = orders.FirstOrDefault(o => o.OrderId == id);
+            // Load the order with details (including Product) so product name/image are available
+            var order = await _orderRepository.GetOrderWithDetailsAsync(id);
 
             if (order == null)
             {
@@ -333,13 +334,37 @@ namespace backend.Controllers
                 {
                     ProductId = od.ProductId,
                     ProductName = od.Product?.ProductName ?? "Unknown Product",
-                    ProductImage = od.Product?.Img,
+                    ProductImage = od.Product != null ? BuildProductImagePath(od.Product) : null,
                     Quantity = od.Quantity,
                     Price = od.Price
                 }).ToList() ?? new List<OrderDetailItemViewModel>()
             };
 
             return View(vm);
+        }
+
+        private static string BuildProductImagePath(backend.Entities.Store.Product product)
+        {
+            var imagePath = product.Img?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(imagePath))
+            {
+                return "~/template/img/product-1.jpg";
+            }
+
+            imagePath = imagePath.Replace("\\", "/");
+
+            if (imagePath.StartsWith("~/", StringComparison.Ordinal))
+            {
+                return imagePath;
+            }
+
+            if (imagePath.StartsWith("/", StringComparison.Ordinal))
+            {
+                return "~" + imagePath;
+            }
+
+            var fileName = Path.GetFileName(imagePath);
+            return $"~/images/products/{fileName}";
         }
     }
 }

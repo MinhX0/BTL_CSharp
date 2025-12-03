@@ -53,12 +53,46 @@ namespace backend.Services
                 .OrderByDescending(x => x.TotalRevenue)
                 .ToListAsync();
 
+            // Daily aggregation within selected range (typically one month)
+            var daily = await query
+                .GroupBy(od => od.Order!.OrderDate.Date)
+                .Select(g => new DailyRevenuePoint
+                {
+                    Date = g.Key,
+                    TotalQuantity = g.Sum(x => x.Quantity),
+                    TotalRevenue = g.Sum(x => (decimal)x.Quantity * (decimal)x.Price)
+                })
+                .OrderBy(p => p.Date)
+                .ToListAsync();
+
+            // Ensure full days of the selected month are present, even with zero values
+            if (filter.StartDate.HasValue && filter.EndDate.HasValue)
+            {
+                var start = filter.StartDate.Value.Date;
+                var end = filter.EndDate.Value.Date;
+                var map = daily.ToDictionary(d => d.Date, d => d);
+                var filled = new System.Collections.Generic.List<DailyRevenuePoint>();
+                for (var d = start; d <= end; d = d.AddDays(1))
+                {
+                    if (map.TryGetValue(d, out var point))
+                    {
+                        filled.Add(point);
+                    }
+                    else
+                    {
+                        filled.Add(new DailyRevenuePoint { Date = d, TotalQuantity = 0, TotalRevenue = 0 });
+                    }
+                }
+                daily = filled;
+            }
+
             var vm = new ProductSalesReportViewModel
             {
                 Filter = filter,
                 Items = grouped,
                 TotalQuantity = grouped.Sum(x => x.TotalQuantity),
-                TotalRevenue = grouped.Sum(x => x.TotalRevenue)
+                TotalRevenue = grouped.Sum(x => x.TotalRevenue),
+                DailyPoints = daily
             };
 
             return vm;

@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace backend.ViewModels.Admin
 {
+    public class DailyRevenuePoint
+    {
+        public DateTime Date { get; set; }
+        public int TotalQuantity { get; set; }
+        public decimal TotalRevenue { get; set; }
+    }
     public class ProductSalesItem
     {
         public int ProductId { get; set; }
@@ -15,6 +21,8 @@ namespace backend.ViewModels.Admin
     {
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
         public int? CategoryId { get; set; }
     }
 
@@ -24,5 +32,6 @@ namespace backend.ViewModels.Admin
         public IList<ProductSalesItem> Items { get; set; } = new List<ProductSalesItem>();
         public int TotalQuantity { get; set; }
         public decimal TotalRevenue { get; set; }
+        public IList<DailyRevenuePoint> DailyPoints { get; set; } = new List<DailyRevenuePoint>();
     }
 }

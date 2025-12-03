@@ -7,7 +7,7 @@
 <div class="navbar-nav w-100" style="max-height: 410px; overflow-y: auto;">
     @foreach (var category in categories)
     {
-        <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@category.CategoryId" class="nav-item nav-link">
+        <a asp-controller="Store" asp-action="Shop" asp-route-categoryId="@category.CategoryId" class="nav-item nav-link">
             @category.CategoryName
         </a>
     }

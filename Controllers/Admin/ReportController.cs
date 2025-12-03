@@ -17,14 +17,18 @@ namespace backend.Controllers.Admin
         }
 
         [HttpGet("Sales")]
-        public async Task<IActionResult> Sales([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] int? categoryId)
+        public async Task<IActionResult> Sales([FromQuery] int? month, [FromQuery] int? year, [FromQuery] int? categoryId)
         {
-            var filter = new ProductSalesReportFilter
+            var filter = new ProductSalesReportFilter { Month = month, Year = year, CategoryId = categoryId };
+
+            // Compute date range if month/year provided
+            if (month.HasValue && year.HasValue && month.Value >= 1 && month.Value <= 12)
             {
-                StartDate = startDate,
-                EndDate = endDate,
-                CategoryId = categoryId
-            };
+                var first = new DateTime(year.Value, month.Value, 1);
+                var last = first.AddMonths(1).AddTicks(-1);
+                filter.StartDate = first;
+                filter.EndDate = last;
+            }
 
             var vm = await _reportService.GetProductSalesReportAsync(filter);
             return View("~/Views/Admin/SalesReport.cshtml", vm);

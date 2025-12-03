@@ -4,6 +4,39 @@
     ViewData["Title"] = "Cửa hàng";
     string FormatPrice(decimal value) => ((long)value).ToString("N0", new System.Globalization.CultureInfo("vi-VN")) + " ₫";
 }
+@section Carousel {
+    <div id="header-carousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active" style="height: 410px;">
+                <img class="img-fluid" src="https://cdn.casio-vietnam.vn/wp-content/uploads/2024/09/z5834462921612_f6e895ab1e8c7cf42aa0e5f00b784b91.jpg" alt="Image">
+                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                    <div class="p-3" style="max-width: 700px;">
+                        <a href="#" class="btn btn-light py-2 px-3">Mua ngay</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item" style="height: 410px;">
+                <img class="img-fluid" src="https://cdn.casio-vietnam.vn/wp-content/uploads/2024/09/z5834465488940_8fa54646674993b94ea7590072b0450e.jpg" alt="Image">
+                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                    <div class="p-3" style="max-width: 700px;">
+                        <h3 class="display-4 text-white font-weight-semi-bold mb-4">Giá hợp lý</h3>
+                        <a href="#" class="btn btn-light py-2 px-3">Mua ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#header-carousel" data-slide="prev">
+            <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                <span class="carousel-control-prev-icon mb-n2"></span>
+            </div>
+        </a>
+        <a class="carousel-control-next" href="#header-carousel" data-slide="next">
+            <div class="btn btn-dark" style="width: 45px; height: 45px;">
+                <span class="carousel-control-next-icon mb-n2"></span>
+            </div>
+        </a>
+    </div>
+}
 
 <!-- Featured Start -->
 <div class="container-fluid pt-5">

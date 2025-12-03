@@ -23,6 +23,14 @@
                         <label for="ShippingAddress">Địa chỉ giao hàng</label>
                         <input asp-for="ShippingAddress" class="form-control" required />
                         <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                        <div class="mt-2 d-flex gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleMapBtn">Chọn trên bản đồ</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="geoBtn">Dùng vị trí của tôi</button>
+                        </div>
+                        <div id="checkoutMapWrap" style="display:none;">
+                            <small class="text-muted d-block mb-1">Nhấn vào bản đồ để chọn vị trí giao hàng. Địa chỉ sẽ tự động điền.</small>
+                            <div id="checkoutMap" style="height:320px;border-radius:8px;overflow:hidden;"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="PaymentMethod">Phương thức thanh toán</label>
@@ -59,4 +67,84 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            const addressInput =
+                document.querySelector('#ShippingAddress') ||
+                document.querySelector('input[name="ShippingAddress"]') ||
+                document.querySelector('input[name$=\'.ShippingAddress\']');
+
+            const toggleBtn = document.getElementById('toggleMapBtn');
+            const geoBtn = document.getElementById('geoBtn');
+            const mapWrap = document.getElementById('checkoutMapWrap');
+            const mapEl = document.getElementById('checkoutMap');
+
+            let map, marker;
+
+            function ensureMap() {
+                if (map) return;
+                map = L.map(mapEl).setView([14.0583, 108.2772], 5); // Vietnam center
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                marker = L.marker([14.0583, 108.2772], { draggable: true }).addTo(map);
+
+                function handleSet(lat, lon) {
+                    marker.setLatLng([lat, lon]);
+                    reverseGeocode(lat, lon);
+                }
+
+                map.on('click', (e) => handleSet(e.latlng.lat, e.latlng.lng));
+                marker.on('dragend', () => {
+                    const p = marker.getLatLng();
+                    reverseGeocode(p.lat, p.lng);
+                });
+            }
+
+            async function reverseGeocode(lat, lon) {
+                try {
+                    const qs = new URLSearchParams({ lat: String(lat), lon: String(lon), lang: 'vi' });
+                    const res = await fetch(`/api/geocode/reverse?${qs.toString()}`);
+                    if (!res.ok) throw new Error('Reverse geocoding error');
+                    const data = await res.json();
+                    const display = data?.display_name || '';
+                    if (addressInput && display) addressInput.value = display;
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    const showing = mapWrap.style.display !== 'none';
+                    mapWrap.style.display = showing ? 'none' : 'block';
+                    if (!showing) {
+                        ensureMap();
+                        setTimeout(() => map.invalidateSize(), 0);
+                    }
+                });
+            }
+
+            if (geoBtn) {
+                geoBtn.addEventListener('click', () => {
+                    if (!navigator.geolocation) return alert('Thiết bị không hỗ trợ định vị.');
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            const { latitude, longitude } = pos.coords;
+                            mapWrap.style.display = 'block';
+                            ensureMap();
+                            map.setView([latitude, longitude], 16);
+                            marker.setLatLng([latitude, longitude]);
+                            reverseGeocode(latitude, longitude);
+                        },
+                        () => alert('Không thể lấy vị trí hiện tại.')
+                    );
+                });
+            }
+        })();
+    </script>
 }
