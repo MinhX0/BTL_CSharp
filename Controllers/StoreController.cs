@@ -377,6 +377,27 @@ namespace backend.Controllers
             return RedirectToAction("Contact", "Home");
         }
 
+        [HttpGet]
+        public IActionResult PaymentResult()
+        {
+            // Read VNPay return parameters to show result to user
+            var code = Request.Query["vnp_ResponseCode"].ToString();
+            var txnRef = Request.Query["vnp_TxnRef"].ToString();
+            var transactionNo = Request.Query["vnp_TransactionNo"].ToString();
+            var amountMinor = Request.Query["vnp_Amount"].ToString();
+
+            var model = new PaymentResultViewModel
+            {
+                OrderId = int.TryParse(txnRef, out var oid) ? oid : (int?)null,
+                Success = string.Equals(code, "00", StringComparison.Ordinal),
+                ResponseCode = code ?? string.Empty,
+                TransactionNo = transactionNo ?? string.Empty,
+                Amount = long.TryParse(amountMinor, out var minor) ? minor / 100 : (long?)null
+            };
+
+            return View(model);
+        }
+
         private static ProductCardViewModel ToProductCardViewModel(Product product, IReadOnlyDictionary<int, string> categoriesLookup)
         {
             return new ProductCardViewModel

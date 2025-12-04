@@ -1,9 +1,6 @@
 @model backend.ViewModels.Store.CheckoutViewModel
-@{
-    ViewData["Title"] = "Thanh toán";
-}
-<div class="container pt-5">
-    <h2 class="mb-4">Thanh toán</h2>
+<section class="container py-4">
+    <h2 class="mb-3">Checkout</h2>
     @if (TempData["Success"] != null) {<div class="alert alert-success">@TempData["Success"]</div>}
     @if (TempData["Info"] != null) {<div class="alert alert-info">@TempData["Info"]</div>}
     @if (TempData["Error"] != null) {<div class="alert alert-danger">@TempData["Error"]</div>}
@@ -14,137 +11,124 @@
     }
     else
     {
-        <form asp-controller="Store" asp-action="Checkout" method="post">
-            @Html.AntiForgeryToken()
-            <div class="row">
-                <div class="col-md-7">
-                    <h4>Thông tin giao hàng</h4>
-                    <div class="form-group">
-                        <label for="ShippingAddress">Địa chỉ giao hàng</label>
-                        <input asp-for="ShippingAddress" class="form-control" required />
-                        <span asp-validation-for="ShippingAddress" class="text-danger"></span>
-                        <div class="mt-2 d-flex gap-2">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleMapBtn">Chọn trên bản đồ</button>
-                            <button type="button" class="btn btn-outline-primary btn-sm" id="geoBtn">Dùng vị trí của tôi</button>
-                        </div>
-                        <div id="checkoutMapWrap" style="display:none;">
-                            <small class="text-muted d-block mb-1">Nhấn vào bản đồ để chọn vị trí giao hàng. Địa chỉ sẽ tự động điền.</small>
-                            <div id="checkoutMap" style="height:320px;border-radius:8px;overflow:hidden;"></div>
-                        </div>
+        <div class="row">
+            <div class="col-md-7">
+                <h4>Thông tin giao hàng</h4>
+                <div class="form-group">
+                    <label for="ShippingAddress">Địa chỉ giao hàng</label>
+                    <input name="ShippingAddress" id="ShippingAddress" value="@Model.ShippingAddress" class="form-control" />
+                    <div class="mt-2 d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleMapBtn">Chọn trên bản đồ</button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="geoBtn">Dùng vị trí của tôi</button>
                     </div>
-                    <div class="form-group">
-                        <label for="PaymentMethod">Phương thức thanh toán</label>
-                        <select asp-for="PaymentMethod" class="form-control">
-                            <option value="CashOnDelivery">Thanh toán khi nhận hàng (COD)</option>
-                            <option value="CreditCard">Thẻ tín dụng</option>
-                        </select>
+                    <div id="checkoutMapWrap" style="display:none;">
+                        <small class="text-muted d-block mb-1">Nhấn vào bản đồ để chọn vị trí giao hàng. Địa chỉ sẽ tự động điền.</small>
+                        <div id="checkoutMap" style="height:320px;border-radius:8px;overflow:hidden;"></div>
                     </div>
-                </div>
-                <div class="col-md-5">
-                    <h4>Tóm tắt đơn hàng</h4>
-                    <ul class="list-group mb-3">
-                        @foreach (var item in Model.Items)
-                        {
-                            <li class="list-group-item d-flex justify-content-between lh-condensed">
-                                <div>
-                                    <h6 class="my-0">@item.Name</h6>
-                                    <small class="text-muted">x @item.Quantity</small>
-                                </div>
-                                <span class="text-muted">@item.LineTotal.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ₫</span>
-                            </li>
-                        }
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Tổng cộng</span>
-                            <strong>@Model.Total.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ₫</strong>
-                        </li>
-                    </ul>
-                    <button type="submit" class="btn btn-primary btn-block">Đặt hàng</button>
                 </div>
             </div>
-        </form>
-    }
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
-    <script>
-        (function () {
-            const addressInput =
-                document.querySelector('#ShippingAddress') ||
-                document.querySelector('input[name="ShippingAddress"]') ||
-                document.querySelector('input[name$=\'.ShippingAddress\']');
-
-            const toggleBtn = document.getElementById('toggleMapBtn');
-            const geoBtn = document.getElementById('geoBtn');
-            const mapWrap = document.getElementById('checkoutMapWrap');
-            const mapEl = document.getElementById('checkoutMap');
-
-            let map, marker;
-
-            function ensureMap() {
-                if (map) return;
-                map = L.map(mapEl).setView([14.0583, 108.2772], 5); // Vietnam center
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(map);
-
-                marker = L.marker([14.0583, 108.2772], { draggable: true }).addTo(map);
-
-                function handleSet(lat, lon) {
-                    marker.setLatLng([lat, lon]);
-                    reverseGeocode(lat, lon);
-                }
-
-                map.on('click', (e) => handleSet(e.latlng.lat, e.latlng.lng));
-                marker.on('dragend', () => {
-                    const p = marker.getLatLng();
-                    reverseGeocode(p.lat, p.lng);
-                });
-            }
-
-            async function reverseGeocode(lat, lon) {
-                try {
-                    const qs = new URLSearchParams({ lat: String(lat), lon: String(lon), lang: 'vi' });
-                    const res = await fetch(`/api/geocode/reverse?${qs.toString()}`);
-                    if (!res.ok) throw new Error('Reverse geocoding error');
-                    const data = await res.json();
-                    const display = data?.display_name || '';
-                    if (addressInput && display) addressInput.value = display;
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', () => {
-                    const showing = mapWrap.style.display !== 'none';
-                    mapWrap.style.display = showing ? 'none' : 'block';
-                    if (!showing) {
-                        ensureMap();
-                        setTimeout(() => map.invalidateSize(), 0);
+            <div class="col-md-5">
+                <h4>Tóm tắt đơn hàng</h4>
+                <ul class="list-group mb-3">
+                    @foreach (var item in Model.Items)
+                    {
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <h6 class="my-0">@item.Name</h6>
+                                <small class="text-muted">x @item.Quantity</small>
+                            </div>
+                            <span class="text-muted">@item.LineTotal.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ₫</span>
+                        </li>
                     }
-                });
-            }
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tổng cộng</span>
+                        <strong>@Model.Total.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ₫</strong>
+                    </li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <form method="post" action="/api/checkout/vnpay-checkout">
+                        <button type="submit" class="btn btn-primary">Thanh toán VNPay</button>
+                    </form>
+                    <form asp-controller="Store" asp-action="Checkout" method="post" class="ms-2">
+                        <input type="hidden" name="ShippingAddress" value="@Model.ShippingAddress" />
+                        <input type="hidden" name="PaymentMethod" value="CashOnDelivery" />
+                        <button type="submit" class="btn btn-outline-secondary">Đặt hàng COD</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+<!-- Map + Geolocation helpers -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+<script>
+(function () {
+    const addressInput = document.getElementById('ShippingAddress');
+    const toggleBtn = document.getElementById('toggleMapBtn');
+    const geoBtn = document.getElementById('geoBtn');
+    const mapWrap = document.getElementById('checkoutMapWrap');
+    const mapEl = document.getElementById('checkoutMap');
+    let map, marker;
 
-            if (geoBtn) {
-                geoBtn.addEventListener('click', () => {
-                    if (!navigator.geolocation) return alert('Thiết bị không hỗ trợ định vị.');
-                    navigator.geolocation.getCurrentPosition(
-                        (pos) => {
-                            const { latitude, longitude } = pos.coords;
-                            mapWrap.style.display = 'block';
-                            ensureMap();
-                            map.setView([latitude, longitude], 16);
-                            marker.setLatLng([latitude, longitude]);
-                            reverseGeocode(latitude, longitude);
-                        },
-                        () => alert('Không thể lấy vị trí hiện tại.')
-                    );
-                });
+    function ensureMap() {
+        if (map) return;
+        map = L.map(mapEl).setView([14.0583, 108.2772], 5); // Vietnam center
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        marker = L.marker([14.0583, 108.2772], { draggable: true }).addTo(map);
+        function handleSet(lat, lon) {
+            marker.setLatLng([lat, lon]);
+            reverseGeocode(lat, lon);
+        }
+        map.on('click', (e) => handleSet(e.latlng.lat, e.latlng.lng));
+        marker.on('dragend', () => {
+            const p = marker.getLatLng();
+            reverseGeocode(p.lat, p.lng);
+        });
+    }
+
+    async function reverseGeocode(lat, lon) {
+        try {
+            const qs = new URLSearchParams({ lat: String(lat), lon: String(lon), lang: 'vi' });
+            const res = await fetch(`/api/geocode/reverse?${qs.toString()}`);
+            if (!res.ok) throw new Error('Reverse geocoding error');
+            const data = await res.json();
+            const display = (data && data.display_name) ? data.display_name : '';
+            if (addressInput && display) addressInput.value = display;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const showing = mapWrap.style.display !== 'none';
+            mapWrap.style.display = showing ? 'none' : 'block';
+            if (!showing) {
+                ensureMap();
+                setTimeout(() => map.invalidateSize(), 0);
             }
-        })();
-    </script>
-}
+        });
+    }
+
+    if (geoBtn) {
+        geoBtn.addEventListener('click', () => {
+            if (!navigator.geolocation) return alert('Thiết bị không hỗ trợ định vị.');
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    mapWrap.style.display = 'block';
+                    ensureMap();
+                    map.setView([latitude, longitude], 16);
+                    marker.setLatLng([latitude, longitude]);
+                    reverseGeocode(latitude, longitude);
+                },
+                () => alert('Không thể lấy vị trí hiện tại.')
+            );
+        });
+    }
+})();
+</script>

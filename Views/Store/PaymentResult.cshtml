@@ -1,0 +1,28 @@
+@model backend.ViewModels.Store.PaymentResultViewModel
+<section class="container py-4">
+    <h2 class="mb-3">Kết quả thanh toán</h2>
+    @if (Model.Success)
+    {
+        <div class="alert alert-success">Thanh toán thành công!</div>
+        <p><strong>Mã giao dịch:</strong> @Model.TransactionNo</p>
+        @if (Model.Amount.HasValue)
+        {
+            <p><strong>Số tiền:</strong> @Model.Amount.Value.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) ₫</p>
+        }
+        @if (Model.OrderId.HasValue)
+        {
+            <p><a asp-controller="Account" asp-action="OrderDetail" asp-route-id="@Model.OrderId.Value" class="btn btn-primary">Xem đơn hàng #@Model.OrderId.Value</a></p>
+        }
+        <a asp-controller="Store" asp-action="Shop" class="btn btn-link">Tiếp tục mua sắm</a>
+    }
+    else
+    {
+        <div class="alert alert-danger">Thanh toán không thành công.</div>
+        <p><strong>Mã phản hồi:</strong> @Model.ResponseCode</p>
+        @if (Model.OrderId.HasValue)
+        {
+            <p><a asp-controller="Account" asp-action="OrderDetail" asp-route-id="@Model.OrderId.Value" class="btn btn-outline-secondary">Xem đơn hàng #@Model.OrderId.Value</a></p>
+        }
+        <a asp-controller="Store" asp-action="Cart" class="btn btn-link">Quay lại giỏ hàng</a>
+    }
+</section>
